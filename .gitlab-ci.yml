@@ -14,6 +14,6 @@ deploy_staging:
     name: staging
     url: example.com
   script:
-    - ssh root@89.58.43.235 "cd racinglines && git pull origin main && cd sys-src/server && npm install && pm2 restart bin/www"
+    - ssh root@89.58.43.235 "cd racinglines && git pull origin development && cd sys-src/server && npm install && pm2 restart bin/www"
   only:
-    - master
+    - development
