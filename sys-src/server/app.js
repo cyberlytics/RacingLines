@@ -3,6 +3,16 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const mongoose = require('mongoose');
+const Score = require('./models/score')
+
+//connect to mongodb
+const dbURI = 'mongodb+srv://rluser:RacingLines123@cluster0.vehm5.mongodb.net/RacingLinesDatabase?retryWrites=true&w=majority';
+mongoose.connect(dbURI)
+    .then(() => console.log('connected to db'))
+    .catch((err) => console.log(err));
+
+
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -24,6 +34,22 @@ app.use('/users', usersRouter);
 
 app.get('/hello', (req, res) => {
   res.send('Hello World!')
+})
+
+app.get('/add-score', (req, res) => {
+  const score = new Score({
+    roomID: 'new scoreID',
+    playerID: 'new playerID',
+    score: 20
+  });
+
+  score.save()
+      .then((result) => {
+        res.send(result)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 })
 
 // catch 404 and forward to error handler
