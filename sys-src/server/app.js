@@ -52,6 +52,26 @@ app.get('/add-score', (req, res) => {
       });
 })
 
+app.get('/all-scores', (req, res) => {
+  Score.find()
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+})
+
+app.get('/single-score', (req, res) => {
+  Score.findById('62925edd58c810164db79158')
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+})
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
