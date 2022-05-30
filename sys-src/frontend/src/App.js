@@ -1,5 +1,8 @@
 import './App.css';
-import Canvas from './components/Canvas.jsx'
+import Canvas from './components/Canvas';
+import KeyBindings from './components/KeyBindings';
+
+
 
 function App() {
   return (
@@ -7,10 +10,11 @@ function App() {
       <header className="App-header">
         <h1>Racing Lines</h1>
         <Canvas/>
-      </header>
-      
+         </header>
+     <KeyBindings/>
     </div>
   );
 }
+
 
 export default App;
