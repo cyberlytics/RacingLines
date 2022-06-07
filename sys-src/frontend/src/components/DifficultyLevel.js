@@ -18,9 +18,9 @@ export default function DifficultyLevel() {
                 aria-labelledby="demo-row-radio-buttons-group-label"
                 name="row-radio-buttons-group"
             >
-                <FormControlLabel value="easy" control={<Radio />} label="Leicht" />
+                <FormControlLabel value="easy" control={<Radio />} label="Easy" />
                 <FormControlLabel value="normal" control={<Radio />} label="Normal" />
-                <FormControlLabel value="hard" control={<Radio />} label="Schwer" />
+                <FormControlLabel value="hard" control={<Radio />} label="Hard" />
             </RadioGroup>
         </FormControl>
     );
