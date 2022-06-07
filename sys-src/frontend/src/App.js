@@ -9,7 +9,8 @@ const App = () => {
         <div>
             <Routes>
                 <Route exact path="/Home" element={<Home/>}/>
-                <Route path="/Lobby" element={<Game/>}/>
+                <Route path="/Lobby" element={<Lobby/>}/>
+                <Route path="/Game" element={<Game/>}/>
                 <Route path="*" element={<Home/>}/>
             </Routes>
         </div>

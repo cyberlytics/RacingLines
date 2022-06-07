@@ -3,6 +3,8 @@ import {useSearchParams} from "react-router-dom";
 import io from 'socket.io-client';
 import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import CopyLink from "./components/CopyLink";
+import DifficultyLevel from "./components/DifficultyLevel";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -43,7 +45,7 @@ const Lobby = () => {
     function handleResetButtonClick() {
         setNumber(0);
     }
-
+    //communication with server
     const sendMessage = () => {
         socket.emit("send_message", {number, room});
         console.log(number);
@@ -69,6 +71,8 @@ const Lobby = () => {
                         onClick={handleAddButtonClick}>add</Button>
                 <Button variant="contained" color="secondary" type="button" onClick={handleResetButtonClick}>reset</Button>
             </div>
+            <CopyLink/>
+            <DifficultyLevel/>
         </div>
     );
 }
