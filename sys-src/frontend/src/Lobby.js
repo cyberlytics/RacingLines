@@ -7,10 +7,11 @@ import CopyLink from "./components/CopyLink";
 import DifficultyLevel from "./components/DifficultyLevel";
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
+import PlayerColors from './components/PlayerColors';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
-        marginTop: theme.spacing(25),
+        marginTop: theme.spacing(10),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -31,7 +32,7 @@ const grid_classes = {
     },
     paper: {
       padding: 20,
-      textAlign: "center",
+      textAlign: "left",
       color: "blue",
       fontFamily: "Roboto"
     }
@@ -82,7 +83,6 @@ const Lobby = () => {
             
             <div style={grid_classes.root}>
             <Grid container spacing={3}>
-                {/*For example,This item will be 12 units wide on extra small screens */}
                 <Grid item xs={12}>
                     <Paper style={grid_classes.paper}>
                         <CopyLink/>
@@ -90,6 +90,7 @@ const Lobby = () => {
                 </Grid>
                 {/*This item will be 12 units on extra small screens */}
                 {/*But will be 6 units on small screens */}
+                
                 <Grid item xs={12} sm={6}>
                     <Paper style={grid_classes.paper}>
                         <div className={classes.paper}>
@@ -102,23 +103,23 @@ const Lobby = () => {
                         </div>
                     </Paper>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                    <Paper style={grid_classes.paper}>
-                        <DifficultyLevel/>
-                    </Paper>
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                <Paper style={grid_classes.paper}>xs=6 sm=3</Paper>
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                <Paper style={grid_classes.paper}>xs=6 sm=3</Paper>
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                <Paper style={grid_classes.paper}>xs=6 sm=3</Paper>
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                <Paper style={grid_classes.paper}>xs=6 sm=3</Paper>
-                </Grid>
+                <Grid item xs={6}>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <Paper style={grid_classes.paper}>
+                                <DifficultyLevel/>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Paper style={grid_classes.paper}>
+                                <PlayerColors/>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button variant="contained" className={classes.button} color="primary" type="button">Play</Button>
+                        </Grid>
+                    </Grid>
+                </Grid>                                                              
             </Grid>
             </div>
         </div>

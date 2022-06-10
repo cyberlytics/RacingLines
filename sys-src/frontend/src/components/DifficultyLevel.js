@@ -12,7 +12,7 @@ import FormLabel from '@mui/material/FormLabel';
 export default function DifficultyLevel() {
     return (
         <FormControl>
-            <FormLabel id="demo-row-radio-buttons-group-label">Difficulty Level</FormLabel>
+            <FormLabel id="demo-row-radio-buttons-group-label">Choose a Level</FormLabel>
             <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
