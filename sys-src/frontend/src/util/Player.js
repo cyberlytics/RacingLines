@@ -1,24 +1,19 @@
 export class Player {
-    constructor(name, id, circleColor, wallColor) {
+    constructor(name, id, circleColor, wallColor, positionX, positionY, directionAngle) {
         this.name = name;
         this.id = id;
         this.segmentCount = 0;
         this.size = 5;
-        this.directionAngle = 0;
+        this.directionAngle = directionAngle;
         this.circleColor = circleColor;
         this.lineColor = wallColor;
         this.score = 0;
-        this.positionStack = [];
+        this.positionStack = [{x: positionX, y: positionY}];
         this.speed = 100;
         this.isAlive = true;
-        this.positionY = 400;
-        this.positionX = 400;
-    }
-
-    //randomize the player starting position
-    randomizePlayerStartingPosition(gameSize) {
-        this.positionX = Math.floor(Math.random() * (gameSize - 1 + 1)) + 1;
-        this.positionY = Math.floor(Math.random() * (gameSize - 1 + 1)) + 1;
+        this.positionY = positionY;
+        this.positionX = positionX;
+        this.isDrawing = true;
     }
 
     //move the player in the direction he is facing with the player speed with the delta time of the game
