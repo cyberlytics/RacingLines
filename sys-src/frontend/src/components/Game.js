@@ -4,8 +4,7 @@ import io from "socket.io-client";
 import {useSearchParams} from "react-router-dom";
 import {Player} from "../util/Player";
 
-
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
 
 const Game = () => {
 
