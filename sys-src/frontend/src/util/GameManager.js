@@ -2,6 +2,7 @@ import {Renderer} from './Renderer';
 import {ServerCommunicationHelper} from './ServerCommunicationHelper';
 import {Player} from './Player';
 import React from "react";
+import {compareArraysAsSet} from "@testing-library/jest-dom/dist/utils";
 
 export class GameManager{
     constructor(Socket, boardSize) {
@@ -24,12 +25,12 @@ export class GameManager{
     }
 
     //update the game state
-    updateGameState(deltaTime) {
+    updateGameState(deltaTime, ctx) {
         this.players.forEach(player => {
             player.updateDirection(this.inputDictionary[player.id].RightKeyPressed, this.inputDictionary[player.id].LeftKeyPressed);
             player.move(deltaTime);
             this.checkCollision(player);
-            //this.checkCollisionWithLines(player);
+            this.checkCollisionWithLines(player, ctx);
         });
     }
 
@@ -68,9 +69,41 @@ export class GameManager{
     }
 
     //check if the player is colliding with the lines drawn to the canvas
-    checkCollisionWithLines() {
-        this.players.forEach(player => {
-        });
+    checkCollisionWithLines(player, ctx) {
+        let pxTop = ctx.getImageData(player.positionX, player.positionY - (player.size+1), 1, 1);
+        let pxBottom = ctx.getImageData(player.positionX, player.positionY + (player.size+1), 1, 1);
+        let pxLeft = ctx.getImageData(player.positionX - (player.size+1), player.positionY, 1, 1);
+        let pxRight = ctx.getImageData(player.positionX + (player.size+1), player.positionY, 1, 1);
+        console.log(player.directionAngle);
+        let sin = Math.sin(player.directionAngle);
+        let cos = Math.cos(player.directionAngle);
+        //dir -> down
+        if(sin >= 0 && cos >= -0.5 && cos <= 0.5)
+        {
+            if(!this.pixelIsWhite(pxBottom) || !this.pixelIsWhite(pxRight) || !this.pixelIsWhite(pxLeft)) player.isAlive = false;
+        }
+        //dir -> up
+        else if(sin <= 0 && cos > -0.5 && cos < 0.5)
+        {
+            if(!this.pixelIsWhite(pxTop) || !this.pixelIsWhite(pxRight) || !this.pixelIsWhite(pxLeft)) player.isAlive = false;
+        }
+        //dir -> left
+        else if(cos <= 0 && sin >= -0.5 && sin <= 0.5)
+        {
+            if(!this.pixelIsWhite(pxBottom) || !this.pixelIsWhite(pxTop) || !this.pixelIsWhite(pxLeft)) player.isAlive = false;
+        }
+        //dir -> right
+        else if(cos >= 0 && sin > -0.5 && sin < 0.5)
+        {
+            if(!this.pixelIsWhite(pxBottom) || !this.pixelIsWhite(pxRight) || !this.pixelIsWhite(pxTop)) player.isAlive = false;
+        }
+    }
+
+    pixelIsWhite(pixel) {
+        for(let i = 0; i < 4; i++){
+            if(pixel.data[i] != 0) return false;
+        }
+        return true;
     }
 
     drawGame(canvas, ctx) {

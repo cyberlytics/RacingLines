@@ -92,7 +92,7 @@ const Game = () => {
             let varNow =  new Date().getTime();
             let deltaTime = (varNow - GamMan.lastTick) / 1000;
             GamMan.lastTick = varNow;
-            GamMan.updateGameState(deltaTime);
+            GamMan.updateGameState(deltaTime, ctx);
             GamMan.drawGame(canvas, ctx);
 
         }, 1000 / 60);
