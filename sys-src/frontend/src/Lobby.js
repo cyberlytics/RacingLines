@@ -1,8 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, Component} from 'react';
 import {useSearchParams} from "react-router-dom";
 import io from 'socket.io-client';
 import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+
+import { render } from "react-dom";
+
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -19,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const socket = io.connect(process.env.REACT_APP_IPAdress+":3001");
+const socket = io.connect("http://localhost:3001");
 
 const Lobby = () => {
     const classes = useStyles();
@@ -71,6 +74,8 @@ const Lobby = () => {
             </div>
         </div>
     );
+
+    
 }
 
 export default Lobby;
