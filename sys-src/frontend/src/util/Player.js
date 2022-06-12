@@ -36,5 +36,12 @@ export class Player {
         if (rightKeyPressed === true) {
             this.directionAngle += Math.PI / 35;
         }
+        if (this.isAlive === true) {
+            this.positionStack.push({
+                x: this.positionX,
+                y: this.positionY,
+                segment: this.segmentCount
+            });
+        }
     }
 }

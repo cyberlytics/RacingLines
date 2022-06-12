@@ -98,8 +98,9 @@ const Game = () => {
         return () => clearInterval(tick);
     });
 
-    //useEffect for the player lines
+    //useEffect for the player
     //add the player position of all players to the position stack
+    /*
     useEffect(() => {
         const tick = setInterval(() => {
             GamMan.players.forEach((player) => {
@@ -113,7 +114,7 @@ const Game = () => {
             });
         }, 1000 / 15);
         return () => clearInterval(tick);
-    });
+    });*/
 
     return (
         <header>
