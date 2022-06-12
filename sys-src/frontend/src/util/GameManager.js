@@ -73,12 +73,6 @@ export class GameManager{
     //check if the player is colliding with the lines drawn to the canvas
     checkCollisionWithLines() {
         this.players.forEach(player => {
-            player.positionStack.forEach(stack => {
-                    let distance = Math.sqrt(Math.pow(player.positionX - stack.x, 2) + Math.pow(player.positionY - stack.y, 2));
-                    if (distance < player.size/2) {
-                        player.isAlive = false;
-                    }
-            });
         });
     }
 
