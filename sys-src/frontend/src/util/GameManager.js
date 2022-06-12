@@ -74,7 +74,6 @@ export class GameManager{
         let pxBottom = ctx.getImageData(player.positionX, player.positionY + (player.size+1), 1, 1);
         let pxLeft = ctx.getImageData(player.positionX - (player.size+1), player.positionY, 1, 1);
         let pxRight = ctx.getImageData(player.positionX + (player.size+1), player.positionY, 1, 1);
-        console.log(player.directionAngle);
         let sin = Math.sin(player.directionAngle);
         let cos = Math.cos(player.directionAngle);
         //dir -> down
@@ -83,12 +82,12 @@ export class GameManager{
             if(!this.pixelIsWhite(pxBottom) || !this.pixelIsWhite(pxRight) || !this.pixelIsWhite(pxLeft)) player.isAlive = false;
         }
         //dir -> up
-        else if(sin <= 0 && cos > -0.5 && cos < 0.5)
+        else if(sin <= 0 && cos >= -0.5 && cos <= 0.5)
         {
             if(!this.pixelIsWhite(pxTop) || !this.pixelIsWhite(pxRight) || !this.pixelIsWhite(pxLeft)) player.isAlive = false;
         }
         //dir -> left
-        else if(cos <= 0 && sin >= -0.5 && sin <= 0.5)
+        else if(cos <= 0 && sin > -0.5 && sin < 0.5)
         {
             if(!this.pixelIsWhite(pxBottom) || !this.pixelIsWhite(pxTop) || !this.pixelIsWhite(pxLeft)) player.isAlive = false;
         }
