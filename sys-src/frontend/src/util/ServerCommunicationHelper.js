@@ -1,4 +1,3 @@
-import {Socket} from "socket.io-client";
 export class ServerCommunicationHelper{
     constructor(Socket) {
         this.Socket = Socket;
@@ -7,17 +6,19 @@ export class ServerCommunicationHelper{
 
     //join the game room
     joinRoom(roomName){
-        this.Socket.emit('joinRoom', roomName);
+        this.Socket.emit('join_room', roomName);
         this.room = roomName;
     }
 
     //send the player input to the server
-    sendInput(input) {
-        this.Socket.to(this.room).emit('playerInput', input);
+    sendInput(inputLeft, inputRight, id) {
+        let room = this.room;
+        this.Socket.emit('playerInput', { room ,inputLeft,inputRight, id});
     }
 
     //start the game
     startGame() {
-        this.Socket.emit('startGame', this.room);
+        let room = this.room;
+        this.Socket.emit('startGame', {room});
     }
 }
