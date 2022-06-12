@@ -2,11 +2,13 @@ import {useCallback, useEffect} from "react";
 import {GameManager} from "../util/GameManager";
 import io from "socket.io-client";
 import {useSearchParams} from "react-router-dom";
+import {Player} from "../util/Player";
 
 
 const socket = io.connect("http://localhost:3001");
 
 const Game = () => {
+
     // boardSize before prop is passed in
     let boardSize = 800;
 
@@ -17,43 +19,32 @@ const Game = () => {
     const room = roomParam.get("room");
     GamMan.ServerCommunicationHelper.joinRoom(room);
 
-    /*
-    //socket io useEffect
-    useEffect(() => {
-
-        this.Socket.on('clientId', (data) => {
-            GamMan.clientId = data.clientId;
-        });
-
-        let playerArr = {};
-        this.Socket.on('playerArray', (playerArray) => {
-            playerArr = playerArray;
-        });
-
-        let playerInput = {};
-        this.Socket.on('playerInput', (input) => {
-            playerInput = input;
-        });
-
-        let playerDictionary= {};
-        this.Socket.on('startGame', (data) => {
-            playerDictionary = data;
-        });
-
-        let playerId;
-        this.Socket.on("connect", () => {
-            console.log("connected to server");
-            playerId = this.Socket.id;
-        });
-    }, [socket])*/
-
-
-    //create game
-    GamMan.startRound();
-
     //input variables for the client
     let RightKeyPressed = false;
     let LeftKeyPressed = false;
+
+    useEffect(() => {
+        socket.on('playerInput', (data) => {
+            LeftKeyPressed = data.inputLeft;
+            RightKeyPressed = data.inputRight;
+            GamMan.inputDictionary[data.playerId] = {LeftKeyPressed, RightKeyPressed};
+        });
+
+        socket.on('gameStarted', (data) => {
+            let clientDictionary = data.clientDictionary;
+
+            Object.entries(clientDictionary).forEach(([key, value]) => {
+                GamMan.players.push(new Player("Player" , key, "pink", "blue",value.x, value.y, value.direction));
+                GamMan.inputDictionary[key] = {LeftKeyPressed: false, RightKeyPressed: false};
+            });
+        });
+
+        socket.on("connect", () => {
+            GamMan.clientId = socket.id;
+        });
+    }, [socket]);
+
+
 
     //get input for left and right from the keyboard for the player direction
     useEffect(() => {
@@ -63,7 +54,16 @@ const Game = () => {
             } else if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
                 RightKeyPressed = false;
             }
-            GamMan.inputDictionary[GamMan.players[0].id]={LeftKeyPressed, RightKeyPressed};
+            GamMan.inputDictionary[GamMan.clientId]={LeftKeyPressed, RightKeyPressed};
+            GamMan.ServerCommunicationHelper.sendInput(GamMan.inputDictionary[GamMan.clientId].LeftKeyPressed, GamMan.inputDictionary[GamMan.clientId].RightKeyPressed, GamMan.clientId);
+        });
+    });
+
+    useEffect(() => {
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "w") {
+                GamMan.ServerCommunicationHelper.startGame()
+            }
         });
     });
 
@@ -76,7 +76,8 @@ const Game = () => {
                 RightKeyPressed = true;
             }
             //set input for the player in the input dictionary with the player id as a key
-            GamMan.inputDictionary[GamMan.players[0].id]={LeftKeyPressed, RightKeyPressed};
+            GamMan.inputDictionary[GamMan.clientId]={LeftKeyPressed, RightKeyPressed};
+            GamMan.ServerCommunicationHelper.sendInput(GamMan.inputDictionary[GamMan.clientId].LeftKeyPressed, GamMan.inputDictionary[GamMan.clientId].RightKeyPressed, GamMan.clientId);
         });
     });
 
@@ -91,7 +92,7 @@ const Game = () => {
             let varNow =  new Date().getTime();
             let deltaTime = (varNow - GamMan.lastTick) / 1000;
             GamMan.lastTick = varNow;
-            GamMan.updateGameState(deltaTime, RightKeyPressed, LeftKeyPressed);
+            GamMan.updateGameState(deltaTime);
             GamMan.drawGame(canvas, ctx);
 
         }, 1000 / 60);

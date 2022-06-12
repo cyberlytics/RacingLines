@@ -10,18 +10,17 @@ export class GameManager{
         this.players = [];
         this.roundCount = 0;
         this.boardSize = boardSize;
-        this.inputDictionary = [];
+        this.inputDictionary = {};
+        this.timeSinceLastHole = new Date().getTime();
     }
 
-    setUpRound(){
-        //creates one player and get client player id
-        this.players.push(new Player("Player", 1, "red", "blue"));
-        this.players.push(new Player("Player", 2, "red", "red"));
+    //addPlayerfunction
 
-        this.inputDictionary[this.players[0].id] = {RightKeyPressed: false,LeftKeyPressed: false};
-        this.inputDictionary[this.players[1].id] = {RightKeyPressed: false,LeftKeyPressed: false};
-        this.players[1].positionX = 500;
-        //this.id = this.getPlayersInSocketIORoom()
+
+    setUpRound(){
+        this.inputDictionary[this.clientId] = {RightKeyPressed: false,LeftKeyPressed: false};
+        this.inputDictionary[this.clientId] = {RightKeyPressed: false,LeftKeyPressed: false};
+        this.ServerCommunicationHelper.startGame();
     }
 
     //update the game state
@@ -41,8 +40,6 @@ export class GameManager{
     resetRound() {
         this.players.forEach(player => {
             player.isAlive = true;
-            player.randomizePlayerStartingPosition(this.boardSize);
-            player.randomizePlayerStartingPosition(this.boardSize);
             player.segmentCount = 0;
             player.directionAngle = 0;
             player.score = 0;

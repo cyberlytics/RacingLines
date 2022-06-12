@@ -24,13 +24,16 @@ export class Renderer {
             ctx.strokeStyle = player.lineColor;
             let i = 1;
             for (; i < player.positionStack.length - 2; i++) {
-                console.log((player.positionStack[i].x + player.positionStack[i + 1].x) / 2);
-                let xc = (player.positionStack[i].x + player.positionStack[i + 1].x) / 2;
-                let yc = (player.positionStack[i].y + player.positionStack[i + 1].y) / 2;
-                ctx.quadraticCurveTo(player.positionStack[i].x, player.positionStack[i].y, xc, yc);
+                if(player.positionStack.length>2){
+                    let xc = (player.positionStack[i].x + player.positionStack[i + 1].x) / 2;
+                    let yc = (player.positionStack[i].y + player.positionStack[i + 1].y) / 2;
+                    ctx.quadraticCurveTo(player.positionStack[i].x, player.positionStack[i].y, xc, yc);
+                }
             }
             // curve through the last two points
-            ctx.quadraticCurveTo(player.positionStack[i].x, player.positionStack[i].y, player.positionStack[i + 1].x, player.positionStack[i + 1].y);
+            if(player.positionStack.length>2) {
+                ctx.quadraticCurveTo(player.positionStack[i].x, player.positionStack[i].y, player.positionStack[i + 1].x, player.positionStack[i + 1].y);
+            }
             ctx.quadraticCurveTo(player.positionX, player.positionY, player.positionX, player.positionY);
             ctx.lineWidth = player.size * 0.8;
             ctx.stroke();
