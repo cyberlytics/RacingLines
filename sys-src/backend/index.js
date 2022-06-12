@@ -28,4 +28,23 @@ io.on("connection", (socket) =>{
     socket.on("send_message", (data) => {
         socket.to(data.room).emit("receive_message", data);
     });
+
+    socket.on("startGame", (data) => {
+        const clients = io.sockets.adapter.rooms.get(data.room);
+        //takes every client into an dictionary as a key and adds 2 random numbers to it between 700 and 100
+        //and a value for the starting direction between 360 and 1;
+        const clientDictionary = {};
+        clients.forEach ((client) => {
+            clientDictionary[client] = {
+                x: Math.floor(Math.random() * (700 - 100 + 1)) + 100,
+                y: Math.floor(Math.random() * (700 - 100 + 1)) + 100,
+                direction: Math.floor(Math.random() * (360 - 1 + 1)) + 1
+            }
+        });
+        io.to(this.room).emit('startGame', clientDictionary);
+    });
+
+    socket.on("playerInput", (data) => {
+        io.to(data.room).emit("playerInput", data);
+    });
 });
