@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect(process.env.REACT_APP_IPAdress+":3001");
 
 const Lobby = () => {
     const classes = useStyles();
