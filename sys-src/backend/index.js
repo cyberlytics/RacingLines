@@ -12,13 +12,13 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: process.env.IPAdress+":3000",
+        origin: process.env.IPAddress+":3000",
         methods: ["GET", "POST"]
     }
 });
 
 server.listen(3001, () => {
-    console.log('Server is running on '+process.env.IPAdress+':3001');
+    console.log('Server is running on '+process.env.IPAddress+':3001');
 });
 
 //connect to mongodb
