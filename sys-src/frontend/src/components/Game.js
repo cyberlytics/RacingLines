@@ -1,4 +1,5 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
+import React from "react";
 
 //player class for the game
 class Player {
@@ -35,8 +36,53 @@ class GameSetUp {
 const Game = () => {
     //create player
     const player = new Player("Player 1", 1, "red", "black");
+    const player2 = new Player("Player 2", 1, "red", "black");
+
     //create game
-    const gameSetUp = new GameSetUp([player], 800);
+    const gameSetUp = new GameSetUp([player, player2], 800);
+
+    const [players, setPlayers] = useState(gameSetUp.players);
+
+
+
+    function PlayerList(props) {
+        const players = props.players;
+        let score = players.score;
+        score += 10;
+        const listItems = players.map(({name, score}) =>
+          <li>{name} {score}</li>
+        );
+        return (
+          <ul>{listItems}</ul>
+        );
+      }
+
+    
+    const allPlayers = players.map(({name, score}) => (
+        <li>{name} {score}</li> ));
+  
+    const onChange = ()  => {
+        setPlayers.score += 10;
+    }
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+
+            AddScore();
+            onChange();
+    
+            function AddScore(){
+                players.map(({name, score}) => {
+                    if (player.isAlive === true ) {
+                        player.score += 10;
+                        console.log(player.name, player.score);
+                    }
+                });
+            } 
+               
+        }, 1000);
+        return () => clearInterval(interval);
+    });
 
     //get input for left and right from the keyboard for the player direction
     useEffect(() => {
@@ -158,10 +204,28 @@ const Game = () => {
     });
 
 
+    console.log(players)
+
     return (
+        <>
         <header>
-            <canvas></canvas>
+            <canvas/>
         </header>
+        <div>
+            <h1>Game Component</h1>
+            <PlayerList players={players}/>
+        </div>
+        <body>
+        <div className="App">
+            Liste von Spielern: <li className="List">{allPlayers}</li>
+        </div>
+        <div>
+            
+        </div>
+        </body>
+        
+        </>
+        
     )
 }
 export default Game;
