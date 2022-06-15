@@ -4,8 +4,7 @@ import io from "socket.io-client";
 import {useSearchParams} from "react-router-dom";
 import {Player} from "../util/Player";
 
-
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
 
 const Game = () => {
 
@@ -19,14 +18,11 @@ const Game = () => {
     const room = roomParam.get("room");
     GamMan.ServerCommunicationHelper.joinRoom(room);
 
-    //input variables for the client
-    let RightKeyPressed = false;
-    let LeftKeyPressed = false;
 
     useEffect(() => {
         socket.on('playerInput', (data) => {
-            LeftKeyPressed = data.inputLeft;
-            RightKeyPressed = data.inputRight;
+            let LeftKeyPressed = data.inputLeft;
+            let RightKeyPressed = data.inputRight;
             GamMan.inputDictionary[data.playerId] = {LeftKeyPressed, RightKeyPressed};
         });
 
@@ -44,11 +40,12 @@ const Game = () => {
         });
     }, [socket]);
 
-
-
     //get input for left and right from the keyboard for the player direction
     useEffect(() => {
         document.addEventListener("keyup", (event) => {
+            //input variables for the client
+            let RightKeyPressed = false;
+            let LeftKeyPressed = false;
             if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
                 LeftKeyPressed = false;
             } else if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
@@ -70,6 +67,9 @@ const Game = () => {
     //get input for left and right from the keyboard for the player direction
     useEffect(() => {
         document.addEventListener("keydown", (event) => {
+            //input variables for the client
+            let RightKeyPressed = false;
+            let LeftKeyPressed = false;
             if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
                 LeftKeyPressed = true;
             } else if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
