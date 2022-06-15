@@ -78,22 +78,47 @@ export class GameManager{
         let cos = Math.cos(player.directionAngle);
         //dir -> down
         if(sin >= 0 && cos >= -0.5 && cos <= 0.5)
-        {
+        {/*
+            console.log("down");
+            pxBottom.data[0] = 255;
+            pxBottom.data[1] = 255;
+            pxBottom.data[2] = 255;
+            pxBottom.data[3] = 255;
+            ctx.putImageData(pxBottom, player.positionX, player.positionY + (player.size+1));*/
             if(!this.pixelIsWhite(pxBottom) || !this.pixelIsWhite(pxRight) || !this.pixelIsWhite(pxLeft)) player.isAlive = false;
         }
         //dir -> up
         else if(sin <= 0 && cos >= -0.5 && cos <= 0.5)
-        {
+        {/*
+            console.log("up");
+            pxTop.data[0] = 255;
+            pxTop.data[1] = 255;
+            pxTop.data[2] = 255;
+            pxTop.data[3] = 255;
+            ctx.putImageData(pxTop, player.positionX, player.positionY - (player.size+1));*/
             if(!this.pixelIsWhite(pxTop) || !this.pixelIsWhite(pxRight) || !this.pixelIsWhite(pxLeft)) player.isAlive = false;
         }
         //dir -> left
         else if(cos <= 0 && sin > -0.5 && sin < 0.5)
-        {
+        {/*
+            console.log("left");
+            pxLeft.data[0] = 255;
+            pxLeft.data[1] = 255;
+            pxLeft.data[2] = 255;
+            pxLeft.data[3] = 255;
+            ctx.putImageData(pxLeft, player.positionX - (player.size+1), player.positionY);*/
             if(!this.pixelIsWhite(pxBottom) || !this.pixelIsWhite(pxTop) || !this.pixelIsWhite(pxLeft)) player.isAlive = false;
         }
         //dir -> right
         else if(cos >= 0 && sin > -0.5 && sin < 0.5)
         {
+            /*
+            console.log("right");
+            pxRight.data[0] = 255;
+            pxRight.data[1] = 255;
+            pxRight.data[2] = 255;
+            pxRight.data[3] = 255;
+            ctx.putImageData(pxRight, player.positionX + (player.size+1), player.positionY);*/
             if(!this.pixelIsWhite(pxBottom) || !this.pixelIsWhite(pxRight) || !this.pixelIsWhite(pxTop)) player.isAlive = false;
         }
     }
