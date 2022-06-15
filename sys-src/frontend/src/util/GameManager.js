@@ -12,12 +12,10 @@ export class GameManager{
         this.roundCount = 0;
         this.boardSize = boardSize;
         this.inputDictionary = {};
-        this.timeSinceLastHole = new Date().getTime();
+        this.timeAtLastHole = new Date().getTime();
     }
 
     //addPlayerfunction
-
-
     setUpRound(){
         this.inputDictionary[this.clientId] = {RightKeyPressed: false,LeftKeyPressed: false};
         this.inputDictionary[this.clientId] = {RightKeyPressed: false,LeftKeyPressed: false};
@@ -31,7 +29,23 @@ export class GameManager{
             player.move(deltaTime);
             this.checkCollision(player);
             this.checkCollisionWithLines(player, ctx);
+            if(this.randomNum(1, 40) == 1) this.stopDrawing(player, this.randomNum(100, 300));
         });
+    }
+
+    randomNum(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    stopDrawing(player, time) {
+        player.isDrawing = false;
+        setTimeout(this.resumeDrawing, time, player);
+    }
+
+    resumeDrawing(player) {
+        player.isDrawing = true;
     }
 
     endRound(){
@@ -44,7 +58,6 @@ export class GameManager{
             player.segmentCount = 0;
             player.directionAngle = 0;
             player.score = 0;
-            player.positionStack = [];
         });
     }
 
@@ -130,7 +143,11 @@ export class GameManager{
         return true;
     }
 
-    drawGame(canvas, ctx) {
-        this.Renderer.draw(this.players, this.boardSize,canvas, ctx);
+    drawPlayers(canvas, ctx) {
+        this.Renderer.drawPlayers(this.players, this.boardSize,canvas, ctx);
+    }
+
+    drawLines(canvas, ctx) {
+        this.Renderer.drawLines(this.players, this.boardSize,canvas, ctx);
     }
 }

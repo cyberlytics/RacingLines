@@ -9,7 +9,7 @@ const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
 const Game = () => {
 
     // boardSize before prop is passed in
-    let boardSize = 800;
+    const boardSize = 800;
 
     const GamMan = new GameManager(socket, boardSize);
 
@@ -86,40 +86,27 @@ const Game = () => {
     useEffect(() => {
         const tick = setInterval(() => {
             //get canvas and context
-            const canvas = document.querySelector('canvas');
-            const ctx = canvas.getContext('2d');
+            //const canvas = document.querySelector('canvas');
+            const canvasPl = document.getElementById("cvPlayers");
+            const ctxPl = canvasPl.getContext('2d');
+
+            const canvasLi = document.getElementById("cvLines");
+            const ctxLi = canvasLi.getContext('2d');
 
             let varNow =  new Date().getTime();
             let deltaTime = (varNow - GamMan.lastTick) / 1000;
             GamMan.lastTick = varNow;
-            GamMan.updateGameState(deltaTime, ctx);
-            GamMan.drawGame(canvas, ctx);
-
+            GamMan.drawLines(canvasLi, ctxLi);
+            GamMan.drawPlayers(canvasPl, ctxPl);
+            GamMan.updateGameState(deltaTime, ctxLi);
         }, 1000 / 60);
-        return () => clearInterval(tick);
-    });
-
-    //useEffect for the player
-    //add the player position of all players to the position stack
-
-    useEffect(() => {
-        const tick = setInterval(() => {
-            GamMan.players.forEach((player) => {
-                if (player.isAlive === true) {
-                    player.positionStack.push({
-                        x: player.positionX,
-                        y: player.positionY,
-                        segment: player.segmentCount
-                    });
-                }
-            });
-        }, 1000 / 15);
         return () => clearInterval(tick);
     });
 
     return (
         <header>
-            <canvas></canvas>
+            <canvas id={"cvPlayers"} width={boardSize} height={boardSize} style={{zIndex:2, position: 'absolute', top: 0, left: 0}}></canvas>
+            <canvas id={"cvLines"} width={boardSize} height={boardSize} style={{zIndex:1, position: 'absolute', top: 0, left: 0}}></canvas>
         </header>
     )
 }
