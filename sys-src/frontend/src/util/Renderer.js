@@ -3,7 +3,6 @@ export class Renderer {
     }
 
     draw(players, boardSize,canvas,ctx) {
-        console.log(boardSize);
         canvas.width = boardSize;
         canvas.height = boardSize;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
