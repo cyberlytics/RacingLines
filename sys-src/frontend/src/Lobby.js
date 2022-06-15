@@ -4,10 +4,12 @@ import io from 'socket.io-client';
 import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import CopyLink from "./components/CopyLink";
-import DifficultyLevel from "./components/DifficultyLevel";
+import CanvasSize from "./components/CanvasSize";
+import GameTempo from "./components/GameTempo";
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import PlayerColors from './components/PlayerColors';
+import { TextField } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -93,6 +95,7 @@ const Lobby = () => {
                 
                 <Grid item xs={12} sm={6}>
                     <Paper style={grid_classes.paper}>
+                        <TextField id="outlined-basic" label="Your Playername" variant="outlined" />
                         <div className={classes.paper}>
                             <h1>Counter</h1>
                             <h1>{number}</h1></div>
@@ -107,7 +110,12 @@ const Lobby = () => {
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
                             <Paper style={grid_classes.paper}>
-                                <DifficultyLevel/>
+                                <CanvasSize/>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Paper style={grid_classes.paper}>
+                                <GameTempo/>
                             </Paper>
                         </Grid>
                         <Grid item xs={12}>
