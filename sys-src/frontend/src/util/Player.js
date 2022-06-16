@@ -2,7 +2,7 @@ export class Player {
     constructor(name, id, circleColor, wallColor, positionX, positionY, directionAngle) {
         this.name = name;
         this.id = id;
-        this.size = 5;
+        this.size = 6;
         this.directionAngle = directionAngle;
         this.circleColor = circleColor;
         this.lineColor = wallColor;
@@ -19,6 +19,8 @@ export class Player {
     //move the player in the direction he is facing with the player speed with the delta time of the game
     move(deltaTime) {
         if(this.isAlive) {
+            this.lastY = this.positionY;
+            this.lastX = this.positionX;
             this.positionX += this.speed * Math.cos(this.directionAngle ) * deltaTime;
             this.positionY += this.speed * Math.sin(this.directionAngle) * deltaTime;
         }

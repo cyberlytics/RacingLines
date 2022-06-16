@@ -96,9 +96,10 @@ const Game = () => {
             let varNow =  new Date().getTime();
             let deltaTime = (varNow - GamMan.lastTick) / 1000;
             GamMan.lastTick = varNow;
+
+            GamMan.updateGameState(deltaTime, ctxLi);
             GamMan.drawLines(canvasLi, ctxLi);
             GamMan.drawPlayers(canvasPl, ctxPl);
-            GamMan.updateGameState(deltaTime, ctxLi);
         }, 1000 / 60);
         return () => clearInterval(tick);
     });
