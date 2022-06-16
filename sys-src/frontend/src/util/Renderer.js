@@ -42,11 +42,9 @@ export class Renderer {
                 let yc = (player.lastY + player.positionY) / 2;
                 ctx.quadraticCurveTo(player.lastX,player.lastY, xc, yc);
                 ctx.quadraticCurveTo(player.positionX, player.positionY, player.positionX, player.positionY);
-                ctx.lineWidth = player.size * 0.8;
+                ctx.lineWidth = player.size * 0.7;
                 ctx.stroke();
             }
-            player.lastY = player.positionY;
-            player.lastX = player.positionX;
         });
     }
 
