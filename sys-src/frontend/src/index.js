@@ -22,7 +22,7 @@ ReactDOM.render(
     <BrowserRouter>
         <ThemeProvider theme={colorTheme}>
             <CssBaseline/>
-            <Container maxWidth="false" disableGutters>
+            <Container disableGutters>
                 <App/>
             </Container>
         </ThemeProvider>

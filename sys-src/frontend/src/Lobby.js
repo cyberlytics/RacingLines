@@ -48,7 +48,8 @@ const grid_classes = {
     }
   };
 
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
+
 
 const Lobby = () => {
     const classes = useStyles();
@@ -61,7 +62,7 @@ const Lobby = () => {
 
     const joinRoom = () => {
         if (room !== "") {
-            socket.emit("join_room", {room});
+            socket.emit("join_lobby", {room});
             console.log("joined room");
             console.log(room);
         }
