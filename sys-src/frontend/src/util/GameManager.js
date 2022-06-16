@@ -77,8 +77,8 @@ export class GameManager{
     checkCollisionWithLines(player, ctx) {
         for(let i = 0; i < 5; i++) {
             let rad = player.directionAngle + (Math.PI / 16)*i;
-            let posX = player.positionX + player.size * Math.cos(rad);
-            let posY = player.positionY + player.size * Math.sin(rad);
+            let posX = player.positionX + (player.size-1) * Math.cos(rad);
+            let posY = player.positionY + (player.size-1) * Math.sin(rad);
             let px = ctx.getImageData(posX, posY, 1, 1);
             if(!this.pixelIsWhite(px))
             {
@@ -88,8 +88,8 @@ export class GameManager{
             if(i > 0)
             {
                 rad = player.directionAngle - (Math.PI / 16)*i;
-                posX = player.positionX + player.size * Math.cos(rad);
-                posY = player.positionY + player.size * Math.sin(rad);
+                posX = player.positionX + (player.size-1) * Math.cos(rad);
+                posY = player.positionY + (player.size-1) * Math.sin(rad);
                 px = ctx.getImageData(posX, posY, 1, 1);
                 if(!this.pixelIsWhite(px))
                 {
@@ -99,7 +99,7 @@ export class GameManager{
             }
         }
     }
-    
+
     pixelIsWhite(pixel) {
         for(let i = 0; i < 4; i++){
             if(pixel.data[i] != 0) return false;
