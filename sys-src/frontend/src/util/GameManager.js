@@ -27,7 +27,6 @@ export class GameManager{
         this.players.forEach(player => {
             player.updateDirection(this.inputDictionary[player.id].RightKeyPressed, this.inputDictionary[player.id].LeftKeyPressed);
             player.move(deltaTime);
-            this.checkCollision(player);
             this.checkCollisionWithLines(player, ctx);
             //if(this.randomNum(1, 40) == 1) this.stopDrawing(player, this.randomNum(100, 300));
         });
@@ -74,48 +73,33 @@ export class GameManager{
         }
     }
 
-    //check if the player is colliding with the walls
-    checkCollision(player) {
-        if (player.positionX < 0 || player.positionX > this.boardSize || player.positionY < 0 || player.positionY > this.boardSize) {
-            player.isAlive = false;
-        }
-    }
-
     //check if the player is colliding with the lines drawn to the canvas
     checkCollisionWithLines(player, ctx) {
-        let pxTop = ctx.getImageData(player.positionX, player.positionY - (player.size -1), 1, 1);
-        let pxBottom = ctx.getImageData(player.positionX, player.positionY + (player.size -1), 1, 1);
-        let pxLeft = ctx.getImageData(player.positionX - (player.size -1), player.positionY, 1, 1);
-        let pxRight = ctx.getImageData(player.positionX + (player.size -1), player.positionY, 1, 1);
-        let deg = this.rad2Deg(player.directionAngle);
-
-        //dir -> down
-        if(deg <= 90+45 && deg >= 90-45)
-        {
-            if(!this.pixelIsWhite(pxBottom) || !this.pixelIsWhite(pxRight) || !this.pixelIsWhite(pxLeft)) player.isAlive = false;
-        }
-        //dir -> left
-        else if(deg <= 180+45 && deg >= 180-45)
-        {
-            if(!this.pixelIsWhite(pxBottom) || !this.pixelIsWhite(pxTop) || !this.pixelIsWhite(pxLeft)) player.isAlive = false;
-        }
-        //dir -> up
-        else if(deg <= 270+45 && deg >= 270-45)
-        {
-            if(!this.pixelIsWhite(pxTop) || !this.pixelIsWhite(pxRight) || !this.pixelIsWhite(pxLeft)) player.isAlive = false;
-        }
-        //dir -> right
-        else if((deg <= 360 && deg >= 360-45) || (deg <= 45 && deg >= 0))
-        {
-            if(!this.pixelIsWhite(pxBottom) || !this.pixelIsWhite(pxRight) || !this.pixelIsWhite(pxTop)) player.isAlive = false;
+        for(let i = 0; i < 5; i++) {
+            let rad = player.directionAngle + (Math.PI / 16)*i;
+            let posX = player.positionX + player.size * Math.cos(rad);
+            let posY = player.positionY + player.size * Math.sin(rad);
+            let px = ctx.getImageData(posX, posY, 1, 1);
+            if(!this.pixelIsWhite(px))
+            {
+                player.isAlive = false;
+                return;
+            }
+            if(i > 0)
+            {
+                rad = player.directionAngle - (Math.PI / 16)*i;
+                posX = player.positionX + player.size * Math.cos(rad);
+                posY = player.positionY + player.size * Math.sin(rad);
+                px = ctx.getImageData(posX, posY, 1, 1);
+                if(!this.pixelIsWhite(px))
+                {
+                    player.isAlive = false;
+                    return;
+                }
+            }
         }
     }
-
-    rad2Deg(rad)
-    {
-        return (rad * (180/Math.PI))%360;
-    }
-
+    
     pixelIsWhite(pixel) {
         for(let i = 0; i < 4; i++){
             if(pixel.data[i] != 0) return false;
