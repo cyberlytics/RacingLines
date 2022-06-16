@@ -104,6 +104,7 @@ const Game = () => {
         return () => clearInterval(tick);
     });
 
+
     return (
         <header>
             <canvas id={"cvPlayers"} width={boardSize} height={boardSize} style={{zIndex:2, position: 'absolute', top: 0, left: 0}}></canvas>
