@@ -36,27 +36,21 @@ export class Renderer {
     ctx.stroke();
 
     players.forEach((player) => {
-      //Code Source for player line: https://stackoverflow.com/questions/7054272/how-to-draw-smooth-curve-through-n-points-using-javascript-html5-canvas?answertab=active#tab-top
-      //draws the player's line
-      //move to the first point
-      if (player.isDrawing) {
-        ctx.strokeStyle = player.lineColor;
-        ctx.moveTo(player.lastX, player.lastY);
-        let xc = (player.lastX + player.positionX) / 2;
-        let yc = (player.lastY + player.positionY) / 2;
-        ctx.quadraticCurveTo(player.lastX, player.lastY, xc, yc);
-        ctx.quadraticCurveTo(
-          player.positionX,
-          player.positionY,
-          player.positionX,
-          player.positionY
-        );
-        ctx.lineWidth = player.size * 0.8;
-        ctx.stroke();
-      }
-
-      player.lastY = player.positionY;
-      player.lastX = player.positionX;
+        //Code Source for player line: https://stackoverflow.com/questions/7054272/how-to-draw-smooth-curve-through-n-points-using-javascript-html5-canvas?answertab=active#tab-top
+        //draws the player's line
+        //move to the first point
+        if(player.isDrawing) {
+            ctx.strokeStyle = player.lineColor;
+            ctx.moveTo(player.lastX, player.lastY);
+            let xc = (player.lastX + player.positionX) / 2;
+            let yc = (player.lastY + player.positionY) / 2;
+            ctx.quadraticCurveTo(player.positionX, player.positionY, xc, yc);
+            ctx.lineWidth = player.size * 0.7;
+            ctx.stroke();
+        }
     });
   }
+
+
 }
+

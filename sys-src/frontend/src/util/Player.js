@@ -28,18 +28,20 @@ export class Player {
   //move the player in the direction he is facing with the player speed with the delta time of the game
   move(deltaTime) {
     if (this.isAlive) {
-      this.positionX += this.speed * Math.cos(this.directionAngle) * deltaTime;
-      this.positionY += this.speed * Math.sin(this.directionAngle) * deltaTime;
+        this.lastY = this.positionY;
+        this.lastX = this.positionX;
+        this.positionX += this.speed * Math.cos(this.directionAngle) * deltaTime;
+        this.positionY += this.speed * Math.sin(this.directionAngle) * deltaTime;
     }
   }
 
-  updateDirection(inputLeft, inputRight) {
-    if (inputLeft === true) {
-      this.directionAngle -= Math.PI / 35;
-    }
-    if (inputRight === true) {
-      this.directionAngle += Math.PI / 35;
-    }
+  updateDirection(rightKeyPressed, leftKeyPressed) {
+        if (leftKeyPressed === true) {
+            this.directionAngle -= Math.PI /70;
+        }
+        if (rightKeyPressed === true) {
+            this.directionAngle += Math.PI /70;
+        }
   }
 
   addToPlayerStateBuffer(X, Y, drawing) {

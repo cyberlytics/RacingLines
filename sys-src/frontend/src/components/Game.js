@@ -102,7 +102,6 @@ const Game = () => {
   useEffect(() => {
     const tick = setInterval(() => {
       //get canvas and context
-      //const canvas = document.querySelector('canvas');
       const canvasPl = document.getElementById("cvPlayers");
       const ctxPl = canvasPl.getContext("2d");
 
