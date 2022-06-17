@@ -37,7 +37,6 @@ export class GameManager {
             playerState.isDrawing
           );
           this.checkCollision(player, ctx);
-          if(this.randomNum(1, 60) == 1) this.stopDrawing(player, this.randomNum(100, 300));
         } else if (player.id === this.clientId) {
           player.updateDirection(
             this.clientInput.InputLeft,
@@ -45,7 +44,7 @@ export class GameManager {
           );
           player.move(deltaTime);
           this.checkCollision(player, ctx);
-          if(this.randomNum(1, 60) == 1) this.stopDrawing(player, this.randomNum(100, 300));
+          if(this.randomNum(1, 60) == 1) this.stopDrawing(player, this.randomNum(200, 300));
           this.ServerCommunicationHelper.sendClientPlayerState(
             player.positionX,
             player.positionY,

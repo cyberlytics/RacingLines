@@ -34,16 +34,14 @@ export class Player {
         this.positionY += this.speed * Math.sin(this.directionAngle) * deltaTime;
     }
   }
-
-  updateDirection(rightKeyPressed, leftKeyPressed) {
-        if (leftKeyPressed === true) {
-            this.directionAngle -= Math.PI /70;
+  updateDirection(inputLeft, inputRight) {
+        if (inputLeft === true) {
+            this.directionAngle -= Math.PI / 70;
         }
-        if (rightKeyPressed === true) {
-            this.directionAngle += Math.PI /70;
+        if (inputRight === true) {
+            this.directionAngle += Math.PI / 70;
         }
   }
-
   addToPlayerStateBuffer(X, Y, drawing) {
     this.playerStateBuffer.push({
       positionX: X,
