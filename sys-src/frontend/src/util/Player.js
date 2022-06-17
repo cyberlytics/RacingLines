@@ -51,8 +51,10 @@ export class Player {
   }
 
   setPlayerState(X, Y, isDrawing) {
-    this.positionX = X;
-    this.positionY = Y;
-    this.isDrawing = isDrawing;
+      this.lastY = this.positionY;
+      this.lastX = this.positionX;
+      this.positionX = X;
+      this.positionY = Y;
+      this.isDrawing = isDrawing;
   }
 }
