@@ -38,10 +38,10 @@ export class Renderer {
             if(player.isDrawing) {
                 ctx.strokeStyle = player.lineColor;
                 ctx.moveTo(player.lastX, player.lastY);
+
                 let xc = (player.lastX + player.positionX) / 2;
                 let yc = (player.lastY + player.positionY) / 2;
-                ctx.quadraticCurveTo(player.lastX,player.lastY, xc, yc);
-                ctx.quadraticCurveTo(player.positionX, player.positionY, player.positionX, player.positionY);
+                ctx.quadraticCurveTo(player.positionX, player.positionY, xc, yc);
                 ctx.lineWidth = player.size * 0.7;
                 ctx.stroke();
             }
