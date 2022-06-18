@@ -21,9 +21,6 @@ server.listen(3001, () => {
     console.log('Server is running on '+process.env.IPAddress+':3001');
 });
 
-
-
-
 //connect to mongodb
 const dbURI = 'mongodb+srv://rluser:RacingLines123@cluster0.vehm5.mongodb.net/RacingLinesDatabase?retryWrites=true&w=majority';
 mongoose.connect(dbURI)
@@ -79,18 +76,23 @@ io.on("connection", (socket) =>{
     console.log(`User Connected : ${socket.id}`);
 
     socket.on("join_lobby", (data) =>{
-console.log(data);
-        console.log(`User Joined : ${socket.id}`);
+        console.log(data);
+        //console.log(`User Joined : ${socket.id}`);
         players[socket.id] = {Id:socket.id, Name:"player1", PlayerColor:"black", LineColor:"black"};
-        const clients = io.sockets.adapter.rooms.get(data.room);
+        const clients = io.sockets.adapter.rooms.get(data);  
+        console.log("Inhalt in Clients:  "+ clients);
         joinedPlayers = {};
         console.log(players[socket.id]);
-
-        clients.forEach((client) => {
-                 joinedPlayers[client.id] = players[client.id]
-        });
-        console.log("joinedPlayers[client.id]");
-        socket.emit("joined_players",{joinedPlayers});
+        
+        if (clients !== undefined)
+        {
+            clients.forEach((client) => {
+                joinedPlayers[client.id] = players[client.id]
+            });
+        
+            console.log("joinedPlayers[client.id]");
+            socket.emit("joined_players",{joinedPlayers});
+        }
     
         socket.join(data);
     });
@@ -108,6 +110,7 @@ console.log(data);
         socket.to(data.room).emit("nameChanged", {"players": players[socket.id].Name, "id": socket.id});
         
     socket.on("startGame", (data) => {
+        console.log(data);
         const clients = io.sockets.adapter.rooms.get(data.room);
         const clientDictionary = {};
         clients.forEach((client) => {
