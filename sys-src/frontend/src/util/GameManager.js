@@ -31,11 +31,18 @@ export class GameManager {
           player.playerStateBuffer.length > 0
         ) {
           let playerState = player.playerStateBuffer.shift();
-          player.setPlayerState(
-            playerState.positionX,
-            playerState.positionY,
-            playerState.isDrawing
-          );
+          let latestPlayerState = player.playerStateBuffer.pop();
+          if (player.playerStateBuffer.length >= 5) {
+            player.playerStateBuffer = [];
+            player.playerStateBuffer.push(playerState)
+            player.playerStateBuffer.push(latestPlayerState);
+          }
+            player.setPlayerState(
+              playerState.positionX,
+              playerState.positionY,
+              playerState.isDrawing
+            );
+          }
           this.checkCollision(player, ctx);
         } else if (player.id === this.clientId) {
           player.updateDirection(
@@ -44,7 +51,7 @@ export class GameManager {
           );
           player.move(deltaTime);
           this.checkCollision(player, ctx);
-          if(this.randomNum(1, 60) == 1) this.stopDrawing(player, this.randomNum(200, 300));
+          if (this.randomNum(1, 60) == 1) this.stopDrawing(player, this.randomNum(200, 300));
           this.ServerCommunicationHelper.sendClientPlayerState(
             player.positionX,
             player.positionY,
@@ -83,29 +90,29 @@ export class GameManager {
     this.lastTick = new Date().getTime();
   }
 
-    //check if the player is colliding with the lines drawn to the canvas
-    checkCollision(player, ctx) {
-        for (let i = 0; i < 5; i++) {
-            let rad = player.directionAngle + (Math.PI / 16) * i;
-            let posX = player.positionX + (player.size - 3) * Math.cos(rad);
-            let posY = player.positionY + (player.size - 3) * Math.sin(rad);
-            let px = ctx.getImageData(posX, posY, 1, 1);
-            if (!this.pixelIsWhite(px)) {
-                player.isAlive = false;
-                return;
-            }
-            if (i > 0) {
-                rad = player.directionAngle - (Math.PI / 16) * i;
-                posX = player.positionX + (player.size - 3) * Math.cos(rad);
-                posY = player.positionY + (player.size - 3) * Math.sin(rad);
-                px = ctx.getImageData(posX, posY, 1, 1);
-                if (!this.pixelIsWhite(px)) {
-                    player.isAlive = false;
-                    return;
-                }
-            }
+  //check if the player is colliding with the lines drawn to the canvas
+  checkCollision(player, ctx) {
+    for (let i = 0; i < 5; i++) {
+      let rad = player.directionAngle + (Math.PI / 16) * i;
+      let posX = player.positionX + (player.size - 3) * Math.cos(rad);
+      let posY = player.positionY + (player.size - 3) * Math.sin(rad);
+      let px = ctx.getImageData(posX, posY, 1, 1);
+      if (!this.pixelIsWhite(px)) {
+        player.isAlive = false;
+        return;
+      }
+      if (i > 0) {
+        rad = player.directionAngle - (Math.PI / 16) * i;
+        posX = player.positionX + (player.size - 3) * Math.cos(rad);
+        posY = player.positionY + (player.size - 3) * Math.sin(rad);
+        px = ctx.getImageData(posX, posY, 1, 1);
+        if (!this.pixelIsWhite(px)) {
+          player.isAlive = false;
+          return;
         }
+      }
     }
+  }
 
   pixelIsWhite(pixel) {
     for (let i = 0; i < 4; i++) {
