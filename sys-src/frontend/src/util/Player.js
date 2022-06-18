@@ -10,7 +10,7 @@ export class Player {
   ) {
     this.name = name;
     this.id = id;
-    this.size = 5;
+    this.size = 11;
     this.directionAngle = directionAngle;
     this.circleColor = circleColor;
     this.lineColor = wallColor;
@@ -28,19 +28,19 @@ export class Player {
   //move the player in the direction he is facing with the player speed with the delta time of the game
   move(deltaTime) {
     if (this.isAlive) {
-        this.lastY = this.positionY;
-        this.lastX = this.positionX;
-        this.positionX += this.speed * Math.cos(this.directionAngle) * deltaTime;
-        this.positionY += this.speed * Math.sin(this.directionAngle) * deltaTime;
+      this.lastY = this.positionY;
+      this.lastX = this.positionX;
+      this.positionX += this.speed * Math.cos(this.directionAngle) * deltaTime;
+      this.positionY += this.speed * Math.sin(this.directionAngle) * deltaTime;
     }
   }
   updateDirection(inputLeft, inputRight) {
-        if (inputLeft === true) {
-            this.directionAngle -= Math.PI / 70;
-        }
-        if (inputRight === true) {
-            this.directionAngle += Math.PI / 70;
-        }
+    if (inputLeft === true) {
+      this.directionAngle -= Math.PI / 70;
+    }
+    if (inputRight === true) {
+      this.directionAngle += Math.PI / 70;
+    }
   }
   addToPlayerStateBuffer(X, Y, drawing) {
     this.playerStateBuffer.push({
@@ -51,10 +51,10 @@ export class Player {
   }
 
   setPlayerState(X, Y, isDrawing) {
-      this.lastY = this.positionY;
-      this.lastX = this.positionX;
-      this.positionX = X;
-      this.positionY = Y;
-      this.isDrawing = isDrawing;
+    this.lastY = this.positionY;
+    this.lastX = this.positionX;
+    this.positionX = X;
+    this.positionY = Y;
+    this.isDrawing = isDrawing;
   }
 }
