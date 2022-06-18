@@ -52,8 +52,9 @@ export class GameManager {
           );
           player.move(deltaTime);
           this.checkCollision(player, ctx);
+
           if (this.randomNum(1, 60) == 1)
-            this.stopDrawing(player, this.randomNum(200, 300));
+            this.stopDrawing(player, this.randomNum(250, 350));
           this.ServerCommunicationHelper.sendClientPlayerState(
             player.positionX,
             player.positionY,
