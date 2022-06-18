@@ -33,10 +33,11 @@ export class GameManager {
           let playerState = player.playerStateBuffer.shift();
           let latestPlayerState = player.playerStateBuffer.pop();
           if (player.playerStateBuffer.length >= 5) {
-            player.playerStateBuffer = [];
-            player.playerStateBuffer.push(playerState)
+            player.playerStateBuffer.length = 0;
+            player.playerStateBuffer.push(playerState);
             player.playerStateBuffer.push(latestPlayerState);
           }
+          if (playerState != null) {
             player.setPlayerState(
               playerState.positionX,
               playerState.positionY,
@@ -51,7 +52,8 @@ export class GameManager {
           );
           player.move(deltaTime);
           this.checkCollision(player, ctx);
-          if (this.randomNum(1, 60) == 1) this.stopDrawing(player, this.randomNum(200, 300));
+          if (this.randomNum(1, 60) == 1)
+            this.stopDrawing(player, this.randomNum(200, 300));
           this.ServerCommunicationHelper.sendClientPlayerState(
             player.positionX,
             player.positionY,
