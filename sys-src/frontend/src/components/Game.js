@@ -4,12 +4,10 @@ import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 import { Player } from "../util/Player";
 
-const socket = io.connect(process.env.REACT_APP_IPAddress + ":3001");
-
 const Game = () => {
   // default boardSize
   const boardSize = 800;
-
+  const socket = io.connect(process.env.REACT_APP_IPAddress + ":3001");
   const GamMan = new GameManager(socket, boardSize);
 
   //get room from url and join room
