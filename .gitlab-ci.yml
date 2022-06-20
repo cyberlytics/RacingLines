@@ -45,7 +45,7 @@ testfrontend:
   dependencies:
     - npmfrontend
   script:
-    - cd frontend
+    - cd sys-src/frontend
     - npm test
     
 deployment:
