@@ -1,3 +1,4 @@
+//player class for the game
 export default class Player {
     constructor(name, id, circleColor, wallColor) {
         this.name = name;
@@ -21,6 +22,7 @@ export default class Player {
         this.poistionY += this.speed * Math.sin(this.directionAngle);
     }
 
+    // Count up the score for players who are still alive
     addScore(value) {
         if (this.isAlive) {
             this.score += value;
@@ -28,16 +30,17 @@ export default class Player {
         }
     }
 
+    // Add observers to the observers list
     subscribe(callback) {
         this.callbacks.push(callback);
     }
 
-    // Unsubscribe event
+    // Remove observers from the observers list
     unsubscribe(callback) {
         this.callbacks = this.callbacks.filter((item) => item !== callback);
     }
 
-    //
+    // Notify all observers whenever a specific event occurs
     updateObservers() {
         for (let i = 0; i < this.callbacks.length; i++) {
             this.callbacks[i](this); // this = player object
