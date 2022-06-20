@@ -2,9 +2,6 @@ import React, { useEffect } from 'react';
 import Scoreboard from './Scoreboard';
 import Player from '../model/Player';
 
-//player class for the game
-// separates file
-
 //create game set up class
 class GameSetUp {
     constructor(players, boardSize) {
@@ -19,7 +16,6 @@ const Game = () => {
     //const player2 = new Player('Player 2', 2, 'orange', 'blue');
 
     //create game
-    // score ändert sich iim player objekt - react ändert ui nur bei state
     const gameSetUp = new GameSetUp([player], 800);
 
     function AddScore(value) {
@@ -124,15 +120,14 @@ const Game = () => {
                     //Code Source for player trail: https://stackoverflow.com/questions/7054272/how-to-draw-smooth-curve-through-n-points-using-javascript-html5-canvas?answertab=active#tab-top
                     //draws the player's trail
                     //move to the first point
-                    // Was macht positionStack? FRAGEN! wird nie aufgerufen - positionStack ist immer leer
                     ctx.moveTo(
                         player.positionStack[0].x,
                         player.positionStack[0].y
                     );
                     ctx.strokeStyle = player.wallColor;
                     let i = 1;
+                    // positionStack is empty here - the for loop never runs
                     for (; i < player.positionStack.length - 2; i++) {
-                        //console.log("for");
                         let xc =
                             (player.positionStack[i].x +
                                 player.positionStack[i + 1].x) /
