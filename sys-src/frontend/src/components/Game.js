@@ -1,16 +1,75 @@
-import React, { useEffect } from 'react';
-import Scoreboard from './Scoreboard';
-import Player from '../model/Player';
-
-//create game set up class
-class GameSetUp {
-    constructor(players, boardSize) {
-        this.players = players;
-        this.boardSize = boardSize;
-    }
-}
+import { useCallback, useEffect } from "react";
+import { GameManager } from "../util/GameManager";
+import io from "socket.io-client";
+import { useSearchParams } from "react-router-dom";
+import { Player } from "../util/Player";
 
 const Game = () => {
+  // default boardSize
+  const boardSize = 800;
+  const socket = io.connect(process.env.REACT_APP_IPAddress + ":3001");
+  const GamMan = new GameManager(socket, boardSize);
+
+  //get room from url and join room
+  const [roomParam] = useSearchParams();
+  const room = roomParam.get("room");
+  GamMan.ServerCommunicationHelper.joinRoom(room);
+
+  useEffect(() => {
+    socket.on("newPlayerState", (data) => {
+      for (let i = 0; i < GamMan.players.length; i++) {
+        if (GamMan.players[i].id === data.playerId) {
+          console.log("updating player");
+          GamMan.players[i].addToPlayerStateBuffer(
+            data.positionX,
+            data.positionY,
+            data.isDrawing
+          );
+        }
+      }
+    });
+
+    socket.on("gameStarted", (data) => {
+      let clientDictionary = data.clientDictionary;
+      Object.entries(clientDictionary).forEach(([key, value]) => {
+        let player = new Player(
+          "player",
+          key,
+          "green",
+          "blue",
+          value.x,
+          value.y,
+          value.direction
+        );
+        player.addToPlayerStateBuffer(value.x, value.y, true);
+        GamMan.players.push(player);
+        GamMan.gameRunning = true;
+      });
+    });
+
+    socket.on("connect", () => {
+      GamMan.clientId = socket.id;
+    });
+  }, [socket]);
+
+  let RightKeyPressed = false;
+  let LeftKeyPressed = false;
+
+  //get input for left and right from the keyboard for the player direction
+  useEffect(() => {
+    document.addEventListener("keyup", (event) => {
+      if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
+        LeftKeyPressed = false;
+      } else if (
+        event.key === "ArrowRight" ||
+        event.key === "d" ||
+        event.key === "D"
+      ) {
+        RightKeyPressed = false;
+      }
+      GamMan.setClientInput(LeftKeyPressed, RightKeyPressed);
+    });
+  });
     //create player
     const player = new Player('Player 1', 1, 'red', 'black');
     //const player2 = new Player('Player 2', 2, 'orange', 'blue');
@@ -31,172 +90,71 @@ const Game = () => {
         return () => clearInterval(interval);
     });
 
-    //get input for left and right from the keyboard for the player direction
-    useEffect(() => {
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowLeft') {
-                player.directionAngle -= Math.PI / 25;
-            } else if (event.key === 'ArrowRight') {
-                player.directionAngle += Math.PI / 25;
-            } else if (event.key === 'a') {
-                player.directionAngle -= Math.PI / 25;
-            } else if (event.key === 'd') {
-                player.directionAngle += Math.PI / 25;
-            }
-        });
+  //get input for left and right from the keyboard for the player direction
+  useEffect(() => {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
+        LeftKeyPressed = true;
+      } else if (
+        event.key === "ArrowRight" ||
+        event.key === "d" ||
+        event.key === "D"
+      ) {
+        RightKeyPressed = true;
+      }
+      //set input for the player in the input dictionary with the player id as a key
+      GamMan.setClientInput(LeftKeyPressed, RightKeyPressed);
     });
+  });
 
-    //collision detection for the player
-    //if the player hits the wall or the other player the player dies
-    useEffect(() => {
-        if (
-            player.poistionX > gameSetUp.boardSize ||
-            player.poistionX < 0 ||
-            player.poistionY > gameSetUp.boardSize ||
-            player.poistionY < 0
-        ) {
-            player.isAlive = false;
-        }
+  useEffect(() => {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "w") {
+        GamMan.setUpRound();
+      }
     });
+  });
 
-    //Game loop
-    //Draw the game and move the player with a tick rate of 60 times per second
-    useEffect(() => {
-        const tick = setInterval(() => {
-            //sets up the canvas
-            const canvas = document.querySelector('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = gameSetUp.boardSize;
-            canvas.height = gameSetUp.boardSize;
+  //Draw the game and move the player with a tick rate of 60 times per second
+  useEffect(() => {
+    const tick = setInterval(() => {
+      //get canvas and context
+      const canvasPl = document.getElementById("cvPlayers");
+      const ctxPl = canvasPl.getContext("2d");
 
-            movePlayers();
-            draw();
+      const canvasLi = document.getElementById("cvLines");
+      const ctxLi = canvasLi.getContext("2d");
 
-            //update all player positions if the player is alive
-            function movePlayers() {
-                gameSetUp.players.forEach((player) => {
-                    if (player.isAlive === true) {
-                        player.move();
-                    }
-                });
-                //check if the player with the walls, other players and if the player the trail
-                gameSetUp.players.forEach((player) => {
-                    if (player.isAlive === true) {
-                        for (let i = 0; i < gameSetUp.players.length; i++) {
-                            if (
-                                player.poistionX ===
-                                    gameSetUp.players[i].poistionX &&
-                                player.poistionY ===
-                                    gameSetUp.players[i].poistionY &&
-                                player.id !== gameSetUp.players[i].id
-                            ) {
-                                player.isAlive = false;
-                            }
-                        }
-                        if (
-                            player.poistionX > gameSetUp.boardSize ||
-                            player.poistionX < 0 ||
-                            player.poistionY > gameSetUp.boardSize ||
-                            player.poistionY < 0
-                        ) {
-                            player.isAlive = false;
-                        }
-                    }
-                });
-            }
+      let varNow = new Date().getTime();
+      let deltaTime = (varNow - GamMan.lastTick) / 1000;
+      GamMan.lastTick = varNow;
+      GamMan.drawLines(canvasLi, ctxLi);
+      GamMan.drawPlayers(canvasPl, ctxPl);
+      GamMan.updateGameState(deltaTime, ctxLi);
+    }, 1000 / 60);
+    return () => clearInterval(tick);
+  });
 
-            //draws the game
-            //draws the player as a circle with the players color
-            //draws trail of the player as a line with the player's wall color
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                gameSetUp.players.forEach((player) => {
-                    //draws the game border
-                    ctx.beginPath();
-                    ctx.rect(0, 0, canvas.width, canvas.height);
-                    ctx.strokeStyle = 'black';
-                    ctx.stroke();
-
-                    //Code Source for player trail: https://stackoverflow.com/questions/7054272/how-to-draw-smooth-curve-through-n-points-using-javascript-html5-canvas?answertab=active#tab-top
-                    //draws the player's trail
-                    //move to the first point
-                    ctx.moveTo(
-                        player.positionStack[0].x,
-                        player.positionStack[0].y
-                    );
-                    ctx.strokeStyle = player.wallColor;
-                    let i = 1;
-                    // positionStack is empty here - the for loop never runs
-                    for (; i < player.positionStack.length - 2; i++) {
-                        let xc =
-                            (player.positionStack[i].x +
-                                player.positionStack[i + 1].x) /
-                            2;
-                        let yc =
-                            (player.positionStack[i].y +
-                                player.positionStack[i + 1].y) /
-                            2;
-                        ctx.quadraticCurveTo(
-                            player.positionStack[i].x,
-                            player.positionStack[i].y,
-                            xc,
-                            yc
-                        );
-                    }
-                    // curve through the last two points
-                    ctx.quadraticCurveTo(
-                        player.positionStack[i].x,
-                        player.positionStack[i].y,
-                        player.positionStack[i + 1].x,
-                        player.positionStack[i + 1].y
-                    );
-                    ctx.lineWidth = player.size * 0.8;
-                    ctx.stroke();
-
-                    //draws the player
-                    ctx.beginPath();
-                    ctx.strokeStyle = player.circleColor;
-                    ctx.fillStyle = player.circleColor;
-                    ctx.arc(
-                        player.poistionX,
-                        player.poistionY,
-                        player.size / 2,
-                        0,
-                        2 * Math.PI
-                    );
-                    ctx.fill();
-                    ctx.stroke();
-                });
-            }
-        }, 1000 / 60);
-        return () => clearInterval(tick);
-    });
-
-    //useEffect for the player trail
-    //add the player position of all players to the position stack
-    useEffect(() => {
-        const tick = setInterval(() => {
-            gameSetUp.players.forEach((player) => {
-                if (player.isAlive === true) {
-                    player.positionStack.push({
-                        x: player.poistionX,
-                        y: player.poistionY,
-                    });
-                }
-            });
-        }, 1000 / 30);
-        return () => clearInterval(tick);
-    });
-
-    return (
-        <>
-            <header>
-                <canvas />
-            </header>
-            <div>
-                <Scoreboard gameSetUp={gameSetUp} />
-            </div>
-        </>
-    );
+  return (
+      <>
+    <header>
+      <canvas
+        id={"cvPlayers"}
+        width={boardSize}
+        height={boardSize}
+        style={{ zIndex: 2, position: "absolute", top: 0, left: 0 }}
+      ></canvas>
+      <canvas
+        id={"cvLines"}
+        width={boardSize}
+        height={boardSize}
+        style={{ zIndex: 1, position: "absolute", top: 0, left: 0 }}
+      ></canvas>
+    </header>
+    <div>
+        <Scoreboard gameSetUp={gameSetUp} />
+    </div>
+      </>
+  );
 };
 export default Game;
