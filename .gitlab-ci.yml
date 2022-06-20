@@ -40,13 +40,13 @@ testbackend:
     - cd sys-src/backend
     - npm test
 
-#testfrontend:
-#  stage: test
-#  dependencies:
-#    - npmfrontend
-#  script:
-#    - cd frontend
-#    - npm test
+testfrontend:
+  stage: test
+  dependencies:
+    - npmfrontend
+  script:
+    - cd frontend
+    - npm test
     
 deployment:
   type: deploy
