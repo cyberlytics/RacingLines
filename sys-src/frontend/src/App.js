@@ -1,5 +1,6 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
+import Lobby from "./Lobby";
 import Home from "./Home";
 import Game from "./components/Game";
 
