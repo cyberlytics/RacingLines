@@ -19,7 +19,6 @@ const Game = () => {
     socket.on("newPlayerState", (data) => {
       for (let i = 0; i < GamMan.players.length; i++) {
         if (GamMan.players[i].id === data.playerId) {
-          console.log("updating player");
           GamMan.players[i].addToPlayerStateBuffer(
             data.positionX,
             data.positionY,
@@ -43,7 +42,7 @@ const Game = () => {
         );
         player.addToPlayerStateBuffer(value.x, value.y, true);
         GamMan.players.push(player);
-        GamMan.gameRunning = true;
+        GamMan.roundStarted = true;
       });
     });
 
@@ -106,18 +105,29 @@ const Game = () => {
       const canvasLi = document.getElementById("cvLines");
       const ctxLi = canvasLi.getContext("2d");
 
+      const canvasCo = document.getElementById("cvCountdown");
+      const ctxCo = canvasLi.getContext("2d");
+
       let varNow = new Date().getTime();
       let deltaTime = (varNow - GamMan.lastTick) / 1000;
       GamMan.lastTick = varNow;
+
+      GamMan.updateGameState(deltaTime, ctxLi);
+      //GamMan.drawCountdown(canvasCo, ctxCo);
       GamMan.drawLines(canvasLi, ctxLi);
       GamMan.drawPlayers(canvasPl, ctxPl);
-      GamMan.updateGameState(deltaTime, ctxLi);
     }, 1000 / 60);
     return () => clearInterval(tick);
   });
 
   return (
-    <header>
+    <div>
+      <canvas
+        id={"cvCountdown"}
+        width={boardSize}
+        height={boardSize}
+        style={{ zIndex: 3, position: "absolute", top: 0, left: 0 }}
+      ></canvas>
       <canvas
         id={"cvPlayers"}
         width={boardSize}
@@ -130,7 +140,7 @@ const Game = () => {
         height={boardSize}
         style={{ zIndex: 1, position: "absolute", top: 0, left: 0 }}
       ></canvas>
-    </header>
+    </div>
   );
 };
 export default Game;
