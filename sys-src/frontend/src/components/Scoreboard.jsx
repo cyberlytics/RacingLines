@@ -34,17 +34,27 @@ export default function Scoreboard({ gameManager }) {
     const classes = useStyles();
 
     useEffect(() => {
+        gameManager.subscribe(subscribe2players);
         // Subscribe each player for changes
+        return () =>
+            // Unsubscribe when component is destroyed
+            gameManager.players.unsubscribe(subscribe2players);
+        //eslint-disable-next-line
+    }, []);
+
+
+
+    const subscribe2players = () => {
+        setPlayers(gameManager.players);
         players.forEach((player) => {
             player.subscribe(update);
         });
         return () =>
             // Unsubscribe when component is destroyed
             players.forEach((player) => {
-                player.unsubscribe(update);
-            });
-        //eslint-disable-next-line
-    }, []);
+            player.unsubscribe(update);
+        });
+    };
 
     // Callback when values of the player has changed
     const update = (player) => {
