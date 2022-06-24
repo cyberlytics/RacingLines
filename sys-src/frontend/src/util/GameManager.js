@@ -14,17 +14,18 @@ export class GameManager {
     this.clientInput = { InputLeft: false, InputRight: false };
     this.timeSinceLastHole = new Date().getTime();
     this.clientId = "";
-    this.gameRunning = false;
+    this.roundStarted = false;
+    this.countdownStarted = false;
   }
 
   setUpRound() {
-    if (this.gameRunning === false) this.ServerCommunicationHelper.startGame();
-    this.gameRunning = true;
+    if (this.roundStarted === false) this.ServerCommunicationHelper.startGame();
+    this.roundStarted = true;
   }
 
   //update the game state
   updateGameState(deltaTime, ctx) {
-    if (this.gameRunning) {
+    if (this.roundStarted) {
       this.players.forEach((player) => {
         if (
           player.id !== this.clientId &&
@@ -45,7 +46,7 @@ export class GameManager {
             );
           }
           this.checkCollision(player, ctx);
-        } else if (player.id === this.clientId) {
+        } else if (player.id === this.clientId && player.isAlive) {
           player.updateDirection(
             this.clientInput.InputLeft,
             this.clientInput.InputRight
@@ -63,6 +64,9 @@ export class GameManager {
         }
         //if(0) this.stopDrawing(player, this.randomNum(100, 300));
       });
+    }
+    if (this.countdownStarted === true) {
+      //TODO: draw countdown
     }
   }
 
@@ -130,5 +134,9 @@ export class GameManager {
 
   drawLines(canvas, ctx) {
     this.Renderer.drawLines(this.players, this.boardSize, canvas, ctx);
+  }
+
+  drawCountdown(canvas, ctx) {
+    this.Renderer.drawCountdown(this.players, this.boardSize, canvas, ctx);
   }
 }
