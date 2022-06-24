@@ -13,6 +13,12 @@ export class GameManager {
         this.timeSinceLastHole = new Date().getTime();
         this.clientId = '';
         this.gameRunning = false;
+        this.callbacks = [];
+    }
+
+    addplayer(player) {
+        this.players.push(player);
+        this.updateObservers();
     }
 
     setUpRound() {
@@ -129,5 +135,21 @@ export class GameManager {
 
     drawLines(canvas, ctx) {
         this.Renderer.drawLines(this.players, this.boardSize, canvas, ctx);
+    }
+
+    subscribe(callback) {
+        this.callbacks.push(callback);
+    }
+
+    // Remove observers from the observers list
+    unsubscribe(callback) {
+        this.callbacks = this.callbacks.filter((item) => item !== callback);
+    }
+
+    // Notify all observers whenever a specific event occurs
+    updateObservers() {
+        for (let i = 0; i < this.callbacks.length; i++) {
+            this.callbacks[i](this); // this = player object
+        }
     }
 }

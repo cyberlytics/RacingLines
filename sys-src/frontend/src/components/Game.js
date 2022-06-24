@@ -43,7 +43,7 @@ const Game = () => {
                     value.direction
                 );
                 player.addToPlayerStateBuffer(value.x, value.y, true);
-                GamMan.players.push(player);
+                GamMan.addplayer(player);
                 GamMan.gameRunning = true;
             });
         });
