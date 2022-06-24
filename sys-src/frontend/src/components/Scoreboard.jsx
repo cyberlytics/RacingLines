@@ -1,47 +1,46 @@
 import { useEffect, useState } from 'react';
-import {makeStyles} from '@material-ui/core/styles';
-import { Box, Typography, Container } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
-    scoreboard:{
+    scoreboard: {
         width: '20%',
         border: '2px solid black',
-        borderRadius: 10,        
-        background: "#f50057", fontWeight: 'bold'
+        borderRadius: 10,
+        background: '#f50057',
+        fontWeight: 'bold',
     },
-    scoreheader:{
-        margin: 10, 
-        fontSize: 25,    
+    scoreHeader: {
+        margin: 10,
+        fontSize: 25,
         textAlign: 'center',
-        textDecoration: 'underline'       
+        textDecoration: 'underline',
     },
-    playerscore:{
+    playerScore: {
         fontSize: 16,
         margin: 10,
-        background: 'FFFFFF'        
+        background: 'FFFFFF',
     },
-    name:{
+    name: {
         display: 'inline',
     },
-    score:{
+    score: {
         display: 'inline',
-        marginLeft: '70%'
-    }
+        marginLeft: '70%',
+    },
 });
 
-export default function Scoreboard({ gameSetUp }) {
-    const [players, setPlayers] = useState(gameSetUp.players);
-
+export default function Scoreboard({ gameManager }) {
+    const [players, setPlayers] = useState(gameManager.players);
     const classes = useStyles();
 
     useEffect(() => {
         // Subscribe each player for changes
-        gameSetUp.players.forEach((player) => {
+        players.forEach((player) => {
             player.subscribe(update);
         });
         return () =>
             // Unsubscribe when component is destroyed
-            gameSetUp.players.forEach((player) => {
+            players.forEach((player) => {
                 player.unsubscribe(update);
             });
         //eslint-disable-next-line
@@ -61,15 +60,15 @@ export default function Scoreboard({ gameSetUp }) {
 
     return (
         <>
-        <div className={classes.scoreboard}>        
-            <h2 className={classes.scoreheader}>SCOREBOARD</h2>
-           {players.map((player) => (
-                <div className={classes.playerscore} key={player.id}>
-                    <p className={classes.name}>{`${player.name}: `}</p>
-                    <p className={classes.score}>{`${player.score}`}</p>
-                </div>
-            ))}
-        </div>
+            <div className={classes.scoreboard}>
+                <h2 className={classes.scoreHeader}>SCOREBOARD</h2>
+                {players.map((player) => (
+                    <div className={classes.playerScore} key={player.id}>
+                        <p className={classes.name}>{`${player.name}: `}</p>
+                        <p className={classes.score}>{`${player.score}`}</p>
+                    </div>
+                ))}
+            </div>
         </>
     );
 }
