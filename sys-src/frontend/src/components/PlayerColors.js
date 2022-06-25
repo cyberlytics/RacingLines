@@ -113,7 +113,10 @@ const RedRadio = withStyles({
   })((props) => <Radio color="default" {...props} />);
 
 
-export default function PlayerColors() {
+export default function PlayerColors({parentMethod}) {
+    function handleClientColorChanged(event){
+        parentMethod(event);
+    }
     return (
         <FormControl>
             <FormLabel id="player-colors-radio-buttons-group-label">Choose your color</FormLabel>
@@ -122,38 +125,38 @@ export default function PlayerColors() {
                 aria-labelledby="player-colors-radio-buttons-group-label"
                 name="player-colors-radio-buttons-group"
             >
-                <FormControlLabel value="red" control={<RedRadio
-                    value="a"
+                <FormControlLabel onChange={handleClientColorChanged} value="red" control={<RedRadio
+                    value="red"
                     name="radio-button-demo"
                     inputProps={{ "aria-label": "A" }}
                 /> } label="Red" />
-                <FormControlLabel value="orange" control={<OrangeRadio
-                    value="b"
+                <FormControlLabel onChange={handleClientColorChanged} value="orange" control={<OrangeRadio
+                    value="orange"
                     name="radio-button-demo"
                     inputProps={{ "aria-label": "B" }}
                 />} label="Orange" />
-                <FormControlLabel value="yellow" control={<YellowRadio
-                    value="c"
+                <FormControlLabel onChange={handleClientColorChanged} value="yellow" control={<YellowRadio
+                    value="yellow"
                     name="radio-button-demo"
                     inputProps={{ "aria-label": "C" }}
                 />} label="Yellow" />
-                <FormControlLabel value="green" control={ <GreenRadio
-                    value="d"
+                <FormControlLabel  onChange={handleClientColorChanged} value="green" control={ <GreenRadio
+                    value="green"
                     name="radio-button-demo"
                     inputProps={{ "aria-label": "D" }}
                 />} label="Green" />
-                <FormControlLabel value="blue" control={<BlueRadio
-                    value="e"
+                <FormControlLabel onChange={handleClientColorChanged} value="blue" control={<BlueRadio
+                    value="blue"
                     name="radio-button-demo"
                     inputProps={{ "aria-label": "E" }}
                 />} label="Blue" />
-                <FormControlLabel value="purple" control={<PurpleRadio
-                    value="f"
+                <FormControlLabel onChange={handleClientColorChanged} value="purple" control={<PurpleRadio
+                    value="purple"
                     name="radio-button-demo"
                     inputProps={{ "aria-label": "F" }}
                 />} label="Purple" />
-                <FormControlLabel value="pink" control={<PinkRadio
-                    value="g"
+                <FormControlLabel onChange={handleClientColorChanged} value="pink" control={<PinkRadio
+                    value="pink"
                     name="radio-button-demo"
                     inputProps={{ "aria-label": "G" }}
                 />} label="Pink" />                
