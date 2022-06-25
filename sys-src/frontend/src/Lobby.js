@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef, Component} from 'react';
-import {useSearchParams} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import io from 'socket.io-client';
 import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -10,7 +10,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import PlayerColors from './components/PlayerColors';
 import { TextField } from '@material-ui/core';
-
+import {v4 as uuidv4} from 'uuid';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -111,6 +111,20 @@ const grid_classes = {
             socket.emit("playerNameChanged", {playerList, room});
         }
 
+        function handleClientColorChanged(event){
+            const newPlayerList = {...playerList};
+            console.log(newPlayerList[socket.id].PlayerColor);
+            newPlayerList[socket.id].PlayerColor = event.target.value;
+            setPlayerList(newPlayerList);
+            console.log(newPlayerList[socket.id].PlayerColor);
+            socket.emit("playerColorChanged", {playerList, room});
+        }
+
+        const navigate = useNavigate();
+        function startGame(event){
+            //WIP
+        }
+
         return (
             <div>
                 <div style={grid_classes.root}>
@@ -155,11 +169,11 @@ const grid_classes = {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Paper style={grid_classes.paper}>
-                                        <PlayerColors/>
+                                        <PlayerColors parentMethod={handleClientColorChanged}/>
                                     </Paper>
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Button variant="contained" className={classes.button} color="primary" type="button">Play</Button>
+                                    <Button onClick={startGame} variant="contained" className={classes.button} color="primary" type="button">Play</Button>
                                 </Grid>
                             </Grid>
                         </Grid>
