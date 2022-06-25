@@ -9,18 +9,32 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 
-export default function DifficultyLevel() {
+
+export default function CanvasSize({parentMethod}) {
+    const [selectedValue, setSelectedValue] = React.useState("medium");
+
+    function handleCanvasSizeChanged(event) {
+        parentMethod(event);
+        setSelectedValue(event.target.value);
+    }
     return (
         <FormControl>
-            <FormLabel id="demo-row-radio-buttons-group-label">Choose a Game Size</FormLabel>
+            <FormLabel>Choose a Game Size</FormLabel>
             <RadioGroup
                 row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
             >
-                <FormControlLabel value="easy" control={<Radio />} label="Small" />
-                <FormControlLabel value="normal" control={<Radio />} label="Medium" />
-                <FormControlLabel value="hard" control={<Radio />} label="Large" />
+                <FormControlLabel value="small" control={<Radio
+                    checked={selectedValue === "small"}
+                    value="small"
+                />} label="Small" onChange={handleCanvasSizeChanged} />
+                <FormControlLabel value="medium" control={<Radio
+                    checked={selectedValue === "medium"}
+                    value="medium"
+                />} label="Medium" onChange={handleCanvasSizeChanged}/>
+                <FormControlLabel value="large" control={<Radio
+                    checked={selectedValue === "large"}
+                    value="large"
+                />} label="Large" onChange={handleCanvasSizeChanged}/>
             </RadioGroup>
         </FormControl>
     );

@@ -84,6 +84,8 @@ io.on("connection", (socket) => {
       Name: "player",
       PlayerColor: "green",
       LineColor: "black",
+      CanvasSize: "medium",
+      GameTempo: "normal"
     };
 
     const clients = io.sockets.adapter.rooms.get(data.room);
@@ -123,6 +125,32 @@ io.on("connection", (socket) => {
       });
     }
     socket.in(data.room).emit("onPlayerColorChanged", { joinedPlayers });
+  });
+
+  socket.on("gameTempoChanged", (data) => {
+    console.log(data.playerList.GameTempo);
+    players[socket.id].GameTempo = data.playerList[socket.id].GameTempo;
+    const clients = io.sockets.adapter.rooms.get(data.room);
+    const joinedPlayers = {};
+    if (clients !== undefined) {
+      clients.forEach((client) => {
+        joinedPlayers[client] = players[client];
+      });
+    }
+    socket.in(data.room).emit("onPlayerColorChanged", { joinedPlayers });
+  });
+
+  socket.on("canvasSizeChanged", (data) => {
+    console.log(data.playerList.CanvasSize);
+    players[socket.id].CanvasSize = data.playerList[socket.id].CanvasSize;
+    const clients = io.sockets.adapter.rooms.get(data.room);
+    const joinedPlayers = {};
+    if (clients !== undefined) {
+      clients.forEach((client) => {
+        joinedPlayers[client] = players[client];
+      });
+    }
+    socket.in(data.room).emit("onCanvasSizeChanged", { joinedPlayers });
   });
 
   /*

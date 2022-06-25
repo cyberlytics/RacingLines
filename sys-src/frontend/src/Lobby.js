@@ -86,6 +86,12 @@ const grid_classes = {
         socket.on('onPlayerColorChanged', (data) => {
             setPlayerList(data.joinedPlayers);
         });
+        socket.on('onCanvasSizeChanged', (data) => {
+            setPlayerList(data.joinedPlayers);
+        });
+        socket.on('onGameTempoChanged', (data) => {
+            setPlayerList(data.joinedPlayers);
+        });
     }, [socket]);
 
     useEffect(() => {
@@ -118,6 +124,24 @@ const grid_classes = {
             setPlayerList(newPlayerList);
             console.log(newPlayerList[socket.id].PlayerColor);
             socket.emit("playerColorChanged", {playerList, room});
+        }
+
+        function handleCanvasSizeChanged(event){
+            const newPlayerList = {...playerList};
+            console.log(newPlayerList[socket.id].CanvasSize);
+            newPlayerList[socket.id].CanvasSize = event.target.value;
+            setPlayerList(newPlayerList);
+            console.log(newPlayerList[socket.id].CanvasSize);
+            socket.emit("canvasSizeChanged", {playerList, room});
+        }
+
+        function handleGameTempoChanged(event){
+            const newPlayerList = {...playerList};
+            console.log(newPlayerList[socket.id].GameTempo);
+            newPlayerList[socket.id].GameTempo = event.target.value;
+            setPlayerList(newPlayerList);
+            console.log(newPlayerList[socket.id].GameTempo);
+            socket.emit("gameTempoChanged", {playerList, room});
         }
 
         const navigate = useNavigate();
@@ -159,12 +183,12 @@ const grid_classes = {
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
                                     <Paper style={grid_classes.paper}>
-                                        <CanvasSize/>
+                                        <CanvasSize parentMethod={handleCanvasSizeChanged}/>
                                     </Paper>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Paper style={grid_classes.paper}>
-                                        <GameTempo/>
+                                        <GameTempo parentMethod={handleGameTempoChanged}/>
                                     </Paper>
                                 </Grid>
                                 <Grid item xs={12}>
