@@ -112,6 +112,19 @@ io.on("connection", (socket) => {
     socket.in(data.room).emit("onPlayerNameChanged", { joinedPlayers });
   });
 
+  socket.on("playerColorChanged", (data) => {
+    console.log(data.playerList.PlayerColor);
+    players[socket.id].PlayerColor = data.playerList[socket.id].PlayerColor;
+    const clients = io.sockets.adapter.rooms.get(data.room);
+    const joinedPlayers = {};
+    if (clients !== undefined) {
+      clients.forEach((client) => {
+        joinedPlayers[client] = players[client];
+      });
+    }
+    socket.in(data.room).emit("onPlayerColorChanged", { joinedPlayers });
+  });
+
   /*
   socket.on("join_room", (data) => {
     console.log("room joined");
