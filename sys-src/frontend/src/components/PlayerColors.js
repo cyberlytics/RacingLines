@@ -1,31 +1,3 @@
-// import React from 'react';
-// import Radio from '@mui/material/Radio';
-// import RadioGroup from '@mui/material/RadioGroup';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import FormControl from '@mui/material/FormControl';
-// import FormLabel from '@mui/material/FormLabel';
-
-// export default function PlayerColors() {
-//     return (
-//         <FormControl>
-//             <FormLabel id="player-colors-radio-buttons-group-label">Choose your color</FormLabel>
-//             <RadioGroup
-//                 row
-//                 aria-labelledby="player-colors-radio-buttons-group-label"
-//                 name="player-colors-radio-buttons-group"
-//             >
-//                 <FormControlLabel value="red" control={<Radio /> } label="Red" />
-//                 <FormControlLabel value="orange" control={<Radio />} label="Orange" />
-//                 <FormControlLabel value="yellow" control={<Radio />} label="Yellow" />
-//                 <FormControlLabel value="green" control={<Radio />} label="Green" />
-//                 <FormControlLabel value="blue" control={<Radio />} label="Blue" />
-//                 <FormControlLabel value="purple" control={<Radio />} label="Purple" />
-//                 <FormControlLabel value="pink" control={<Radio />} label="Pink" />                
-//             </RadioGroup>
-//         </FormControl>
-//     );
-// }
-
 import React from 'react';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -114,51 +86,60 @@ const RedRadio = withStyles({
 
 
 export default function PlayerColors({parentMethod}) {
+    
+    const [selectedValue, setSelectedValue] = React.useState("green");
+
     function handleClientColorChanged(event){
-        parentMethod(event);
+      parentMethod(event);
+      setSelectedValue(event.target.value);
     }
     return (
         <FormControl>
-            <FormLabel id="player-colors-radio-buttons-group-label">Choose your color</FormLabel>
+            <FormLabel>Choose your color</FormLabel>
             <RadioGroup
                 row
-                aria-labelledby="player-colors-radio-buttons-group-label"
-                name="player-colors-radio-buttons-group"
             >
                 <FormControlLabel onChange={handleClientColorChanged} value="red" control={<RedRadio
+                    checked={selectedValue === "red"}
                     value="red"
-                    name="radio-button-demo"
-                    inputProps={{ "aria-label": "A" }}
+                    //name="radio-button-demo"
+                    //inputProps={{ "aria-label": "A" }}
                 /> } label="Red" />
                 <FormControlLabel onChange={handleClientColorChanged} value="orange" control={<OrangeRadio
+                    checked={selectedValue === "orange"}
                     value="orange"
-                    name="radio-button-demo"
-                    inputProps={{ "aria-label": "B" }}
+                    //name="radio-button-demo"
+                    //inputProps={{ "aria-label": "B" }}
                 />} label="Orange" />
                 <FormControlLabel onChange={handleClientColorChanged} value="yellow" control={<YellowRadio
+                    checked={selectedValue === "yellow"}
                     value="yellow"
-                    name="radio-button-demo"
-                    inputProps={{ "aria-label": "C" }}
+                    //name="radio-button-demo"
+                    //inputProps={{ "aria-label": "C" }}
                 />} label="Yellow" />
                 <FormControlLabel  onChange={handleClientColorChanged} value="green" control={ <GreenRadio
+                    checked={selectedValue === "green"}
                     value="green"
-                    name="radio-button-demo"
-                    inputProps={{ "aria-label": "D" }}
+                    //name="radio-button-demo"
+                    //inputProps={{ "aria-label": "D" }}
                 />} label="Green" />
                 <FormControlLabel onChange={handleClientColorChanged} value="blue" control={<BlueRadio
+                    checked={selectedValue === "blue"}
                     value="blue"
-                    name="radio-button-demo"
-                    inputProps={{ "aria-label": "E" }}
+                    //name="radio-button-demo"
+                    //inputProps={{ "aria-label": "E" }}
                 />} label="Blue" />
                 <FormControlLabel onChange={handleClientColorChanged} value="purple" control={<PurpleRadio
+                    checked={selectedValue === "purple"}
                     value="purple"
-                    name="radio-button-demo"
-                    inputProps={{ "aria-label": "F" }}
+                    //name="radio-button-demo"
+                    //inputProps={{ "aria-label": "F" }}
                 />} label="Purple" />
                 <FormControlLabel onChange={handleClientColorChanged} value="pink" control={<PinkRadio
+                    checked={selectedValue === "pink"}
                     value="pink"
-                    name="radio-button-demo"
-                    inputProps={{ "aria-label": "G" }}
+                    //name="radio-button-demo"
+                    //inputProps={{ "aria-label": "G" }}
                 />} label="Pink" />                
             </RadioGroup>
         </FormControl>

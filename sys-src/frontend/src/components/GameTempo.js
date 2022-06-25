@@ -9,18 +9,32 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 
-export default function DifficultyLevel() {
+export default function GameTempo({parentMethod}) {
+
+    const [selectedValue, setSelectedValue] = React.useState("normal");
+
+    function handleGameTempoChanged(event) {
+        parentMethod(event);
+        setSelectedValue(event.target.value);
+    }
     return (
         <FormControl>
-            <FormLabel id="demo-row-radio-buttons-group-label">Choose a Game Tempo</FormLabel>
+            <FormLabel>Choose a Game Tempo</FormLabel>
             <RadioGroup
                 row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
             >
-                <FormControlLabel value="easy" control={<Radio />} label="Slow" />
-                <FormControlLabel value="normal" control={<Radio />} label="Medium" />
-                <FormControlLabel value="hard" control={<Radio />} label="Fast" />
+                <FormControlLabel onChange={handleGameTempoChanged} value="easy" control={<Radio
+                    checked={selectedValue === "slow"}
+                    value="easy"
+                />} label="Slow" />
+                <FormControlLabel onChange={handleGameTempoChanged} value="normal" control={<Radio
+                    checked={selectedValue === "normal"}
+                    value="normal"
+                />} label="Normal"/>
+                <FormControlLabel onChange={handleGameTempoChanged} value="fast" control={<Radio
+                    checked={selectedValue === "fast"}
+                    value="fast"
+                />} label="Fast" />
             </RadioGroup>
         </FormControl>
     );
