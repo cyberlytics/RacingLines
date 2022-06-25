@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, Component} from 'react';
 import {useSearchParams} from "react-router-dom";
 import io from 'socket.io-client';
 import {makeStyles} from '@material-ui/core/styles';
@@ -42,143 +42,129 @@ const grid_classes = {
     player:{
       padding: 20,
       marginBottom: 10,
-      textAlign: "left",
       color: "blue",
+      textAlign: "left",
       fontFamily: "Roboto"
     }
   };
+    const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
 
-const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
 
+    const Lobby = () => {
 
-const Lobby = () => {
     const classes = useStyles();
-    const name = useRef();
+
+    const [playerList,setPlayerList] = useState([]);
 
     const [roomParam] = useSearchParams();
     const room = roomParam.get("room");
+    const clientNameRef = useRef();
 
-    const [number, setNumber] = useState(0);
+    useEffect(() => {
 
-    const joinRoom = () => {
-        if (room !== "") {
-            socket.emit("join_lobby", {room});
-            console.log("joined room");
-            console.log(room);
+        const joinRoom = () => {
+            if (room !== "") {
+                socket.emit("join_lobby", {room});
+                console.log("joined room");
+            }
+        };
+        joinRoom();
+    }, [roomParam]);
+
+    useEffect(() => {
+        socket.on('onPlayerJoin', data => {
+            //console.log(data.joinedPlayers);
+            setPlayerList(data.joinedPlayers);
+        });
+        socket.on('onPlayerLeave', (data) => {
+            setPlayerList(data.joinedPlayers);
+        });
+        socket.on('onPlayerNameChanged', (data) => {
+            setPlayerList(data.joinedPlayers);
+            console.log(data.joinedPlayers.Name)
+        });
+        socket.on('onPlayerColorChanged', (data) => {
+            setPlayerList(data.joinedPlayers);
+        });
+    }, [socket]);
+
+    useEffect(() => {
+        return  Object.keys(playerList).map((item,index) => {
+            return(
+                <option value={playerList[item].Id} key={index}>
+                    {playerList[item].Name}
+                </option>
+            )
+        })
+        //add a TextField for the player in the jsx below
+
+
+
+   }, [playerList]);
+
+        function handleClientNameChanged(event){
+            const newPlayerList = {...playerList};
+            console.log(newPlayerList[socket.id].Name);
+            newPlayerList[socket.id].Name = event.target.value;
+            setPlayerList(newPlayerList);
+            console.log(newPlayerList[socket.id].Name);
+            socket.emit("playerNameChanged", {playerList, room});
         }
-    };
-    joinRoom();
 
-    {/*}
-    function handleAddButtonClick() {
-        setNumber(number+1);
-    }
-
-    function handleResetButtonClick() {
-        setNumber(0);
-    }
-*/}
-    //communication with server
-    const sendMessage = () => {
-        socket.emit("send_message", {number, room});
-        console.log(number);
-
-    };
-
-    function handleNameChange() {
-        socket.emit("nameChanged", {name});
-        console.log(name);
-    }
-
-    useEffect(() => {
-        sendMessage();
-    }, [number])
-
-    useEffect(() => {
-        socket.on("receive_message", (data) => {
-            setNumber(data.number);
-        });
-
-        socket.on("playerJoined", (data) => {
-            console.log("playerJoined");
-            let newPaper = React.createElement(<Paper></Paper>);
-            console.table(data);
-            let newTextBox = React.createElement(<TextField></TextField>);
-            document.getElementById("playerNames").appendChild();
-        });
-
-        socket.on("on_join", (data) => {
-            data.joinedPlayers.forEach(player => {
-                /*let newPaper = React.createElement(<Player/>);
-                document.getElementById("Player").appendChild(newPaper);*/
-                console.log(player);
-            });
-        });
-
-        socket.on("on_leave", (data) => {});
-
-    }, [socket])
-
-    return (
-        <div>
-            
-            <div style={grid_classes.root}>
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <Paper style={grid_classes.paper}>
-                        <CopyLink/>
-                    </Paper>
-                </Grid>
-                {/*This item will be 12 units on extra small screens */}
-                {/*But will be 6 units on small screens */}
-                
-                <Grid id="playerNames" item xs={12} sm={6}>
-                    <Paper style={grid_classes.player}>
-                        <ul>
-
-                        <li>
-                        <TextField background="blue" id="outlined-basic" label="Your Playername" variant="outlined" onChange={handleNameChange} ref={name}/>
-                        </li>
-                        {/*<div className={classes.paper}>
-                            <h1>Counter</h1>
-                            <h1>{number}</h1></div>
-                        <div className={classes.button}>
-                            <Button variant="contained" className={classes.button} color="primary" type="button"
-                                    onClick={handleAddButtonClick}>add</Button>
-                            <Button variant="contained" color="secondary" type="button" onClick={handleResetButtonClick}>reset</Button>
-                        </div> */}
-                        
-                        </ul>
-                    </Paper>
-                    
-                </Grid>
-                
-                <Grid item xs={6}>
+        return (
+            <div>
+                <div style={grid_classes.root}>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
                             <Paper style={grid_classes.paper}>
-                                <CanvasSize/>
+                                <CopyLink/>
                             </Paper>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Paper style={grid_classes.paper}>
-                                <GameTempo/>
-                            </Paper>
+                        {/*This item will be 12 units on extra small screens */}
+                        {/*But will be 6 units on small screens */}
+                        <Grid id="playerNames" item xs={12} sm={6}>
+
+                                <ul>{Object.keys(playerList).map((item,index) => {
+                                    if(item===socket.id)return(
+                                        <li key={item} style={{color: playerList[item].PlayerColor, fontSize: 35}}>
+                                            <Paper style={grid_classes.player}>
+                                            <TextField id={item} value={playerList[item].Name} variant="outlined" onChange={handleClientNameChanged}/>
+                                            </Paper>
+                                        </li>
+                                    )
+                                    else return(
+                                        <li key={item} style={{color: playerList[item].PlayerColor, fontSize: 35}}>
+                                            <Paper style={grid_classes.player}>
+                                            <TextField id={item} value={playerList[item].Name} variant="outlined" disabled={true}/>
+                                        </Paper>
+                                        </li>
+                                    )})}
+                                </ul>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Paper style={grid_classes.paper}>
-                                <PlayerColors/>
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button variant="contained" className={classes.button} color="primary" type="button">Play</Button>
+                        <Grid item xs={6}>
+                            <Grid container spacing={3}>
+                                <Grid item xs={12}>
+                                    <Paper style={grid_classes.paper}>
+                                        <CanvasSize/>
+                                    </Paper>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Paper style={grid_classes.paper}>
+                                        <GameTempo/>
+                                    </Paper>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Paper style={grid_classes.paper}>
+                                        <PlayerColors/>
+                                    </Paper>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Button variant="contained" className={classes.button} color="primary" type="button">Play</Button>
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
-                </Grid>                                                              
-            </Grid>
+                </div>
             </div>
-        </div>
-    );
-}
-
-export default Lobby;
+        );
+}; export default Lobby;
