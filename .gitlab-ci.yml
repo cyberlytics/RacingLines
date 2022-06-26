@@ -22,15 +22,11 @@ npmbackend:
       - sys-src/backend/node_modules/
 
 npmfrontend:
-  stage: build
+  stage: test
   script:
     - cd sys-src/frontend
     - npm install
-  artifacts:
-    expire_in: 1 days
-    when: on_success
-    paths:
-      - sys-src/frontend/node_modules/
+    - npm test
 
 testbackend:
   stage: test
@@ -38,14 +34,6 @@ testbackend:
     - npmbackend
   script:
     - cd sys-src/backend
-    - npm test
-
-testfrontend:
-  stage: test
-  dependencies:
-    - npmfrontend
-  script:
-    - cd sys-src/frontend
     - npm test
     
 deployment:
