@@ -20,6 +20,8 @@ describe("Test if serverCommunicationHelper has all functions of the class Serve
     test("Test if startGame() is defined", () => {
         expect(typeof serverCommunicationHelper.startGame).toBe("function");
     })
+
+    socket.disconnect();
 })
 
 
@@ -35,6 +37,8 @@ describe("Test if constructor sets values correct", () => {
     test("Test if room is empty string", () => {
         expect(serverCommunicationHelper.room).toBe("");
     })
+
+    socket.disconnect();
 })
 
 
@@ -49,7 +53,9 @@ describe("Test if joinRoom() sets values correctly", () => {
 
     test("Test if room from ServerCommunicationHelper Object is room from parameter", () => {
         expect(serverCommunicationHelper.room).toBe(room);
-    })  
+    })
+
+    socket.disconnect();
 })
 
 
