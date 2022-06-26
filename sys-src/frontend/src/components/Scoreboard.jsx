@@ -3,29 +3,37 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
     scoreboard: {
-        width: '20%',
-        border: '2px solid black',
-        borderRadius: 10,
-        background: '#f50057',
-        fontWeight: 'bold',
+        width: '200px',
+        borderRadius: 5,
+        background: 'rgb(40,44,52)',
+        color: 'white',
+        position: 'absolute',
+        left: '0',
+        marginTop: '20px',
+        marginLeft: '20px',
+        marginBottom: '20px',
     },
     scoreHeader: {
         margin: 10,
+        fontWeight: 'bold',
         fontSize: 25,
         textAlign: 'center',
-        textDecoration: 'underline',
+        borderBottom: '0.1em solid white',
+        paddingBottom: '0.3em',
     },
     playerScore: {
-        fontSize: 16,
-        margin: 10,
-        background: 'FFFFFF',
+        fontSize: 20,
+        background: 'rgb(40,44,52)',
+        marginLeft: '20px',
+        marginRight: '20px',
+        marginBottom: '20px',
     },
     name: {
         display: 'inline',
     },
     score: {
         display: 'inline',
-        marginLeft: '70%',
+        marginLeft: '60px',
     },
 });
 
@@ -42,8 +50,6 @@ export default function Scoreboard({ gameManager }) {
         //eslint-disable-next-line
     }, []);
 
-
-
     const subscribe2players = () => {
         setPlayers(gameManager.players);
         players.forEach((player) => {
@@ -52,8 +58,8 @@ export default function Scoreboard({ gameManager }) {
         return () =>
             // Unsubscribe when component is destroyed
             players.forEach((player) => {
-            player.unsubscribe(update);
-        });
+                player.unsubscribe(update);
+            });
     };
 
     // Callback when values of the player has changed
@@ -71,7 +77,7 @@ export default function Scoreboard({ gameManager }) {
     return (
         <>
             <div className={classes.scoreboard}>
-                <h2 className={classes.scoreHeader}>SCOREBOARD</h2>
+                <h2 className={classes.scoreHeader}>S c o r e</h2>
                 {players.map((player) => (
                     <div className={classes.playerScore} key={player.id}>
                         <p className={classes.name}>{`${player.name}: `}</p>

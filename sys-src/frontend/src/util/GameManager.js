@@ -100,6 +100,7 @@ export class GameManager {
 
     //check if the player is colliding with the lines drawn to the canvas
     checkCollision(player, ctx) {
+        if (!player.isAlive) return;
         for (let i = 0; i < 5; i++) {
             let rad = player.directionAngle + (Math.PI / 16) * i;
             let posX = player.positionX + (player.size - 3) * Math.cos(rad);
@@ -107,6 +108,7 @@ export class GameManager {
             let px = ctx.getImageData(posX, posY, 1, 1);
             if (!this.pixelIsWhite(px)) {
                 player.isAlive = false;
+                this.increaseScore();
                 return;
             }
             if (i > 0) {
@@ -116,10 +118,21 @@ export class GameManager {
                 px = ctx.getImageData(posX, posY, 1, 1);
                 if (!this.pixelIsWhite(px)) {
                     player.isAlive = false;
+                    this.increaseScore();
                     return;
                 }
             }
         }
+    }
+
+    increaseScore() {
+        this.players.forEach((player) => {
+            if (player.isAlive) {
+                player.addScore(50);
+                console.log('increaseScore');
+                console.log(player.score);
+            }
+        });
     }
 
     pixelIsWhite(pixel) {

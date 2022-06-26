@@ -44,6 +44,7 @@ const Game = () => {
                 );
                 player.addToPlayerStateBuffer(value.x, value.y, true);
                 GamMan.addplayer(player);
+                player.addScore(0);
                 GamMan.gameRunning = true;
             });
         });
@@ -125,46 +126,23 @@ const Game = () => {
         return () => clearInterval(tick);
     });
 
-    useEffect(() => {
-        console.log('useeffect addscore');
-        GamMan.players.forEach((player) => {
-            player.score = player.score + 10;
-            console.log(player.score);
-        });
-    });
-
-    function AddScore(value) {
-        GamMan.players.forEach((player) => {
-            player.addScore(value);
-            console.log(player.score);
-        });
-    }
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            AddScore(10);
-        }, 1000);
-        return () => clearInterval(interval);
-    });
-
     return (
         <div>
             <canvas
                 id={'cvPlayers'}
                 width={boardSize}
                 height={boardSize}
-                style={{ zIndex: 2, position: 'absolute', top: 0, left: 0 }}
+                className={'gameCanvas'}
+                style={{ zIndex: 2 }}
             ></canvas>
             <canvas
                 id={'cvLines'}
                 width={boardSize}
                 height={boardSize}
-                style={{ zIndex: 1, position: 'absolute', top: 0, left: 0 }}
+                className={'gameCanvas'}
+                style={{ zIndex: 1 }}
             ></canvas>
-
-            <div style={{ position: 'absolute', top: 300, left: 700 }}>
-                <Scoreboard gameManager={GamMan} />
-            </div>
+            <Scoreboard gameManager={GamMan} />
         </div>
     );
 };
