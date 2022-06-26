@@ -8,15 +8,14 @@ import React, { Component } from "react";
 
 
 
-
-
 const App = () => {
   
    return (
         <div>
             <Routes>
                 <Route exact path="/Home" element={<Home/>}/>
-                <Route path="/Lobby" element={[<Snackbar/>, <Game/>]}/>
+                <Route path="/Game" element={[<Snackbar/>, <Game/>]}/>
+                <Route path="/Lobby" element={<Lobby/>}/>
                 <Route path="*" element={<Home/>}/>
             </Routes> 
         </div>
