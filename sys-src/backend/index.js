@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const Score = require("./models/score");
+const Poisson = require("poisson-disk-sampling");
 require("dotenv").config();
 
 app.use(cors());
@@ -85,7 +86,7 @@ io.on("connection", (socket) => {
       PlayerColor: "green",
       LineColor: "black",
       CanvasSize: "medium",
-      GameTempo: "normal"
+      GameTempo: "normal",
     };
 
     const clients = io.sockets.adapter.rooms.get(data.room);
@@ -153,41 +154,60 @@ io.on("connection", (socket) => {
     socket.in(data.room).emit("onCanvasSizeChanged", { joinedPlayers });
   });
 
-  /*
   socket.on("join_room", (data) => {
     console.log("room joined");
     socket.join(data);
   });
 
-  socket.on("send_message", (data) => {
-    socket.to(data.room).emit("receive_message", data);
+  socket.on("startGame", (data) => {
+    const clients = io.sockets.adapter.rooms.get(data.room);
+    const clientDictionary = {};
+    let minDist = 300;
+    let p = new Poisson({
+      shape: [600, 600],
+      minDistance: minDist,
+      tries: 10,
+    });
+    while (p.fill().length < clients.size) {
+      p = new Poisson({
+        shape: [600, 600],
+        minDistance: minDist,
+        tries: 10,
+      });
+      minDist -= 10;
+    }
+    console.log(clients.size + " " + p.fill().length);
+    console.log(p.fill());
+    let counter = 0;
+    clients.forEach((client) => {
+      let xposition = p.fill()[counter][0] + 100;
+      let yposition = p.fill()[counter][1] + 100;
+      console.log(
+        "x: " +
+          (p.fill()[counter][0] + 100) +
+          "y: " +
+          (p.fill()[counter][1] + 100)
+      );
+      clientDictionary[client] = {
+        x: xposition,
+        y: yposition,
+        direction: Math.floor(Math.random() * (360 - 1 + 1)) + 1,
+      };
+      counter += 1;
+    });
+    io.to(data.room).emit("gameStarted", { clientDictionary });
   });
 
-  socket.on("changeName", (data) => {
-    players[socket.id].Name = data.Name;
-    socket
-      .to(data.room)
-      .emit("nameChanged", { players: players[socket.id].Name, id: socket.id });
-
-    socket.on("startGame", (data) => {
-      console.log(data);
-      const clients = io.sockets.adapter.rooms.get(data.room);
-      const clientDictionary = {};
-      clients.forEach((client) => {
-        clientDictionary[client] = {
-          x: Math.floor(Math.random() * (700 - 100 + 1)) + 100,
-          y: Math.floor(Math.random() * (700 - 100 + 1)) + 100,
-          direction: Math.floor(Math.random() * (360 - 1 + 1)) + 1,
-        };
-      });
-      io.to(data.room).emit("gameStarted", { clientDictionary });
+  socket.on("playerState", (data) => {
+    let positionX = data.positionX;
+    let positionY = data.positionY;
+    let isDrawing = data.isDrawing;
+    let playerId = socket.id;
+    io.to(data.room).emit("newPlayerState", {
+      positionX,
+      positionY,
+      isDrawing,
+      playerId,
     });
-
-    socket.on("playerInput", (data) => {
-      let inputLeft = data.inputLeft;
-      let inputRight = data.inputRight;
-      let playerId = data.id;
-      io.to(data.room).emit("playerInput", { inputLeft, inputRight, playerId });
-    });
-  });*/
+  });
 });
