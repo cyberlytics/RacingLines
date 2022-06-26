@@ -2,8 +2,7 @@ export class Renderer {
   constructor() {}
 
   drawPlayers(players, boardSize, canvas, ctx) {
-    //canvas.width = boardSize;
-    //canvas.height = boardSize;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     players.forEach((player) => {
@@ -23,17 +22,22 @@ export class Renderer {
     });
   }
 
-  drawLines(players, boardSize, canvas, ctx) {
-    //canvas.width = boardSize;
-    //canvas.height = boardSize;
+  borderDrawn = false;
 
-    //draws the game border
-    ctx.beginPath();
-    ctx.rect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = "#2196f3";
-    //lineWidth is the width of the border
-    ctx.lineWidth = 10;
-    ctx.stroke();
+  drawLines(players, boardSize, canvas, ctx) {
+
+      if(!this.borderDrawn)
+      {
+          ctx.strokeStyle = "#2196f3";
+          ctx.lineWidth = 10;
+          //draws the game border
+          ctx.beginPath();
+          ctx.rect(0, 0, canvas.width, canvas.height);
+          //lineWidth is the width of the border
+          ctx.stroke();
+          this.borderDrawn = true;
+      }
+
 
     players.forEach((player) => {
         //Code Source for player line: https://stackoverflow.com/questions/7054272/how-to-draw-smooth-curve-through-n-points-using-javascript-html5-canvas?answertab=active#tab-top
