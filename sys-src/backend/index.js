@@ -74,13 +74,15 @@ app.get("/single-score", (req, res) => {
       console.log(err);
     });
 });
+Set.prototype.getByIndex = function(index) { return [...this][index]; }
 
-let players = {};
+let lobbys = {};
 
 io.on("connection", (socket) => {
   socket.on("join_lobby", (data) => {
     socket.join(data.room);
-    players[socket.id] = {
+    if(!lobbys[data.room]) lobbys[data.room] = {};
+    lobbys[data.room][socket.id] = {
       Id: socket.id,
       Name: "player",
       PlayerColor: "green",
@@ -95,7 +97,7 @@ io.on("connection", (socket) => {
     console.log(clients);
     if (clients !== undefined) {
       clients.forEach((client) => {
-        joinedPlayers[client] = players[client];
+        joinedPlayers[client] = lobbys[data.room][client];
       });
     }
     socket.emit("onPlayerJoin", { joinedPlayers });
@@ -104,12 +106,12 @@ io.on("connection", (socket) => {
 
   socket.on("playerNameChanged", (data) => {
     console.log(data.playerList.Name);
-    players[socket.id].Name = data.playerList[socket.id].Name;
+    lobbys[data.room][socket.id].Name = data.playerList[socket.id].Name;
     const clients = io.sockets.adapter.rooms.get(data.room);
     const joinedPlayers = {};
     if (clients !== undefined) {
       clients.forEach((client) => {
-        joinedPlayers[client] = players[client];
+        joinedPlayers[client] = lobbys[data.room][client];
       });
     }
     socket.in(data.room).emit("onPlayerNameChanged", { joinedPlayers });
@@ -117,12 +119,12 @@ io.on("connection", (socket) => {
 
   socket.on("playerColorChanged", (data) => {
     console.log(data.playerList.PlayerColor);
-    players[socket.id].PlayerColor = data.playerList[socket.id].PlayerColor;
+    lobbys[data.room][socket.id].PlayerColor = data.playerList[socket.id].PlayerColor;
     const clients = io.sockets.adapter.rooms.get(data.room);
     const joinedPlayers = {};
     if (clients !== undefined) {
       clients.forEach((client) => {
-        joinedPlayers[client] = players[client];
+        joinedPlayers[client] = lobbys[data.room][client];
       });
     }
     socket.in(data.room).emit("onPlayerColorChanged", { joinedPlayers });
@@ -130,12 +132,12 @@ io.on("connection", (socket) => {
 
   socket.on("gameTempoChanged", (data) => {
     console.log(data.playerList.GameTempo);
-    players[socket.id].GameTempo = data.playerList[socket.id].GameTempo;
+    lobbys[data.room][socket.id].GameTempo = data.playerList[socket.id].GameTempo;
     const clients = io.sockets.adapter.rooms.get(data.room);
     const joinedPlayers = {};
     if (clients !== undefined) {
       clients.forEach((client) => {
-        joinedPlayers[client] = players[client];
+        joinedPlayers[client] = lobbys[data.room][client];
       });
     }
     socket.in(data.room).emit("onPlayerColorChanged", { joinedPlayers });
@@ -143,20 +145,42 @@ io.on("connection", (socket) => {
 
   socket.on("canvasSizeChanged", (data) => {
     console.log(data.playerList.CanvasSize);
-    players[socket.id].CanvasSize = data.playerList[socket.id].CanvasSize;
+    lobbys[data.room][socket.id].CanvasSize = data.playerList[socket.id].CanvasSize;
     const clients = io.sockets.adapter.rooms.get(data.room);
     const joinedPlayers = {};
     if (clients !== undefined) {
       clients.forEach((client) => {
-        joinedPlayers[client] = players[client];
+        joinedPlayers[client] = lobbys[data.room][client];
       });
     }
     socket.in(data.room).emit("onCanvasSizeChanged", { joinedPlayers });
   });
 
+  socket.on("clickedPlay", (data) => {
+    const timestamp = new Date().getTime() + 3000;
+    io.in(data.room).emit("startGame", {'timestamp': timestamp, "players": lobbys[data.room]});
+  });
+
   socket.on("join_room", (data) => {
-    console.log("room joined");
-    socket.join(data);
+
+    if(!lobbys[data.roomName]) lobbys[data.roomName] = {};
+    if(data.player)
+    {
+      lobbys[data.roomName][socket.id] = data.player;
+      lobbys[data.roomName][socket.id].Id = socket.id;
+    }
+    else
+    {
+      lobbys[data.roomName][socket.id] = {
+        Id: socket.id,
+        Name: "player",
+        PlayerColor: "green",
+        LineColor: "black",
+        CanvasSize: "medium",
+        GameTempo: "normal",
+      };
+    }
+    socket.join(data.roomName);
   });
 
   socket.on("startGame", (data) => {
@@ -192,9 +216,13 @@ io.on("connection", (socket) => {
         x: xposition,
         y: yposition,
         direction: Math.floor(Math.random() * (360 - 1 + 1)) + 1,
+        player: lobbys[data.room][client]
       };
       counter += 1;
     });
+
+    console.log("clientDictionary");
+    console.log(clientDictionary);
     io.to(data.room).emit("gameStarted", { clientDictionary });
   });
 
@@ -210,4 +238,14 @@ io.on("connection", (socket) => {
       playerId,
     });
   });
+
+  socket.on("disconnecting", () => {
+    let roomId = socket.rooms.getByIndex(1);
+    if(lobbys[roomId])
+    {
+      if(lobbys[roomId][socket.id]) delete lobbys[roomId][socket.id];
+      if(io.sockets.adapter.rooms.get(roomId).size <= 1) delete lobbys[roomId];
+    }
+  });
+
 });

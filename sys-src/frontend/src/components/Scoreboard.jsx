@@ -52,6 +52,7 @@ export default function Scoreboard({ gameManager }) {
 
     const subscribe2players = () => {
         setPlayers(gameManager.players);
+        console.log(players);
         players.forEach((player) => {
             player.subscribe(update);
         });
