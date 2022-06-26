@@ -1,0 +1,44 @@
+image: node:16.15.1
+
+before_script:
+  - apt-get install -qq git
+  # Setup SSH deploy keys
+  - 'which ssh-agent || ( apt-get install -qq openssh-client )'
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+  - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  - node -v
+
+npmbackend:
+  stage: build
+  script:
+    - cd sys-src/backend
+    - npm install
+  artifacts:
+    expire_in: 1 days
+    when: on_success
+    paths:
+      - sys-src/backend/node_modules/
+
+#testfrontend:
+#  stage: test
+#  script:
+#    - cd sys-src/frontend
+#    - npm install
+#    - npm test
+
+testbackend:
+  stage: test
+  dependencies:
+    - npmbackend
+  script:
+    - cd sys-src/backend
+    - npm test
+    
+deployment:
+  type: deploy
+  script:
+    - ssh root@89.58.43.235 "cd racinglines && git pull origin development && cd sys-src/backend && npm install && cd .. && cd frontend && npm install && pm2 restart backend && pm2 restart frontend"
+  only:
+    - development
