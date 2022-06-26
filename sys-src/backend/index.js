@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const Score = require("./models/score");
+const Poisson = require("poisson-disk-sampling");
 require("dotenv").config();
 
 app.use(cors());
@@ -89,12 +90,38 @@ io.on("connection", (socket) => {
   socket.on("startGame", (data) => {
     const clients = io.sockets.adapter.rooms.get(data.room);
     const clientDictionary = {};
+    let minDist = 300;
+    let p = new Poisson({
+      shape: [600, 600],
+      minDistance: minDist,
+      tries: 10,
+    });
+    while (p.fill().length < clients.size) {
+      p = new Poisson({
+        shape: [600, 600],
+        minDistance: minDist,
+        tries: 10,
+      });
+      minDist -= 10;
+    }
+    console.log(clients.size + " " + p.fill().length);
+    console.log(p.fill());
+    let counter = 0;
     clients.forEach((client) => {
+      let xposition = p.fill()[counter][0] + 100;
+      let yposition = p.fill()[counter][1] + 100;
+      console.log(
+        "x: " +
+          (p.fill()[counter][0] + 100) +
+          "y: " +
+          (p.fill()[counter][1] + 100)
+      );
       clientDictionary[client] = {
-        x: Math.floor(Math.random() * (700 - 100 + 1)) + 100,
-        y: Math.floor(Math.random() * (700 - 100 + 1)) + 100,
+        x: xposition,
+        y: yposition,
         direction: Math.floor(Math.random() * (360 - 1 + 1)) + 1,
       };
+      counter += 1;
     });
     io.to(data.room).emit("gameStarted", { clientDictionary });
   });
