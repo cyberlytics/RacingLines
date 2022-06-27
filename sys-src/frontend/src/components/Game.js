@@ -19,14 +19,6 @@ const Game = () => {
     GamMan.ServerCommunicationHelper.setRoom(room);
 
     useEffect(() => {
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'w') {
-                GamMan.setUpRound();
-            }
-        });
-    });
-
-    useEffect(() => {
 
         socket.on('newPlayerState', (data) => {
             for (let i = 0; i < GamMan.players.length; i++) {
