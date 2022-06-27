@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import game from "./Game";
 
 const useStyles = makeStyles({
     scoreboard: {
@@ -46,13 +47,15 @@ export default function Scoreboard({ gameManager }) {
         // Subscribe each player for changes
         return () =>
             // Unsubscribe when component is destroyed
-            gameManager.players.unsubscribe(subscribe2players);
+            gameManager.unsubscribe(subscribe2players);
         //eslint-disable-next-line
     }, []);
 
     const subscribe2players = () => {
+        players.forEach((player) => {
+            player.unsubscribe(update);
+        });
         setPlayers(gameManager.players);
-        console.log(players);
         players.forEach((player) => {
             player.subscribe(update);
         });

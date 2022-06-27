@@ -161,69 +161,53 @@ io.on("connection", (socket) => {
     io.in(data.room).emit("startGame", {'timestamp': timestamp, "players": lobbys[data.room]});
   });
 
-  socket.on("join_room", (data) => {
-
-    if(!lobbys[data.roomName]) lobbys[data.roomName] = {};
-    if(data.player)
-    {
-      lobbys[data.roomName][socket.id] = data.player;
-      lobbys[data.roomName][socket.id].Id = socket.id;
-    }
-    else
-    {
-      lobbys[data.roomName][socket.id] = {
-        Id: socket.id,
-        Name: "player",
-        PlayerColor: "green",
-        LineColor: "black",
-        CanvasSize: "medium",
-        GameTempo: "normal",
-      };
-    }
-    socket.join(data.roomName);
-  });
-
   socket.on("startGame", (data) => {
-    const clients = io.sockets.adapter.rooms.get(data.room);
-    const clientDictionary = {};
-    let minDist = 300;
-    let p = new Poisson({
-      shape: [600, 600],
-      minDistance: minDist,
-      tries: 10,
-    });
-    while (p.fill().length < clients.size) {
-      p = new Poisson({
+    if(lobbys[data.room])
+    {
+      const clients = io.sockets.adapter.rooms.get(data.room);
+      const clientDictionary = {};
+      let minDist = 300;
+      let p = new Poisson({
         shape: [600, 600],
         minDistance: minDist,
         tries: 10,
       });
-      minDist -= 10;
-    }
-    console.log(clients.size + " " + p.fill().length);
-    console.log(p.fill());
-    let counter = 0;
-    clients.forEach((client) => {
-      let xposition = p.fill()[counter][0] + 100;
-      let yposition = p.fill()[counter][1] + 100;
-      console.log(
-        "x: " +
-          (p.fill()[counter][0] + 100) +
-          "y: " +
-          (p.fill()[counter][1] + 100)
-      );
-      clientDictionary[client] = {
-        x: xposition,
-        y: yposition,
-        direction: Math.floor(Math.random() * (360 - 1 + 1)) + 1,
-        player: lobbys[data.room][client]
-      };
-      counter += 1;
-    });
+      while (p.fill().length < clients.size) {
+        p = new Poisson({
+          shape: [600, 600],
+          minDistance: minDist,
+          tries: 10,
+        });
+        minDist -= 10;
+      }
+      console.log(clients.size + " " + p.fill().length);
+      console.log(p.fill());
+      let counter = 0;
+      clients.forEach((client) => {
+        if(lobbys[data.room][client])
+        {
+          let xposition = p.fill()[counter][0] + 100;
+          let yposition = p.fill()[counter][1] + 100;
+          console.log(
+              "x: " +
+              (p.fill()[counter][0] + 100) +
+              "y: " +
+              (p.fill()[counter][1] + 100)
+          );
+          clientDictionary[client] = {
+            x: xposition,
+            y: yposition,
+            direction: Math.floor(Math.random() * (360 - 1 + 1)) + 1,
+            player: lobbys[data.room][client]
+          };
+          counter += 1;
+        }
+      });
 
-    console.log("clientDictionary");
-    console.log(clientDictionary);
-    io.to(data.room).emit("gameStarted", { clientDictionary });
+      console.log("clientDictionary");
+      console.log(clientDictionary);
+      io.to(data.room).emit("gameStarted", { clientDictionary });
+    }
   });
 
   socket.on("playerState", (data) => {
@@ -240,12 +224,24 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnecting", () => {
+    clearRoom();
+  });
+
+  socket.on("clearRoom", () => {
+    clearRoom();
+  });
+
+  function  clearRoom()
+  {
     let roomId = socket.rooms.getByIndex(1);
     if(lobbys[roomId])
     {
       if(lobbys[roomId][socket.id]) delete lobbys[roomId][socket.id];
-      if(io.sockets.adapter.rooms.get(roomId).size <= 1) delete lobbys[roomId];
+      if( Object.keys(lobbys[roomId]).length == 0) {
+        delete lobbys[roomId];
+      }
     }
-  });
+    if(roomId) socket.leave(roomId);
+  }
 
 });

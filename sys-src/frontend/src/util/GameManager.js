@@ -11,13 +11,18 @@ export class GameManager {
         this.boardSize = boardSize;
         this.clientInput = { InputLeft: false, InputRight: false };
         this.timeSinceLastHole = new Date().getTime();
-        this.clientId = '';
+        this.clientId = Socket.id;
         this.gameRunning = false;
         this.callbacks = [];
     }
 
     addplayer(player) {
         this.players.push(player);
+        this.updateObservers();
+    }
+
+    updatePlayerScores()
+    {
         this.updateObservers();
     }
 
@@ -90,12 +95,6 @@ export class GameManager {
 
     resumeDrawing(player) {
         player.isDrawing = true;
-    }
-
-    startRound(players, boardSize) {
-        this.setUpRound(players, boardSize);
-        this.firstTick = new Date().getTime();
-        this.lastTick = new Date().getTime();
     }
 
     //check if the player is colliding with the lines drawn to the canvas

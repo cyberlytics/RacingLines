@@ -4,6 +4,7 @@ import io from 'socket.io-client';
 import { useSearchParams, useLocation  } from 'react-router-dom';
 import { Player } from '../util/Player';
 import Scoreboard from './Scoreboard';
+import  socket  from '../util/socketConfig';
 
 
 const Game = () => {
@@ -11,38 +12,11 @@ const Game = () => {
     // default boardSize
     const boardSize = 800;
 
-    const socket = io.connect(process.env.REACT_APP_IPAddress + ':3001');
-
     const GamMan = new GameManager(socket, boardSize);
 
-    const location = useLocation();
-    const player = {
-        Id: socket.id,
-        Name: location.state.Name,
-        PlayerColor: location.state.PlayerColor,
-        LineColor: location.state.LineColor,
-        CanvasSize: location.state.CanvasSize,
-        GameTempo: location.state.GameTempo,
-    };
-
-    //get room from url and join room
     const [roomParam] = useSearchParams();
     const room = roomParam.get('room');
-    GamMan.ServerCommunicationHelper.joinRoom(room, player);
-
-    const timestamp = location.state.timestamp;
-
-    /*
-    useEffect(() => {
-        const tick = setInterval(() => {
-            if(new Date().getTime() >= timestamp)
-            {
-                GamMan.setUpRound();
-                clearInterval(tick);
-            }
-        }, 1000 / 20);
-        return () => clearInterval(tick);
-    });*/
+    GamMan.ServerCommunicationHelper.setRoom(room);
 
     useEffect(() => {
         document.addEventListener('keydown', (event) => {
@@ -70,12 +44,8 @@ const Game = () => {
         socket.on('gameStarted', (data) => {
             let clientDictionary = data.clientDictionary;
             console.log(clientDictionary);
+            //while (GamMan.players.length > 0) GamMan.players.pop();
             Object.entries(clientDictionary).forEach(([key, value]) => {
-                console.log("key");
-                console.log(key);
-                console.log("value");
-                console.log(value);
-
                 let player = new Player(
                     value.player.Name,
                     key,
@@ -87,9 +57,13 @@ const Game = () => {
                 );
                 player.addToPlayerStateBuffer(value.x, value.y, true);
                 GamMan.addplayer(player);
-                player.addScore(0);
                 GamMan.gameRunning = true;
             });
+            GamMan.updatePlayerScores();
+            GamMan.players.forEach((player) => {
+                player.addScore(0);
+            });
+            console.log(GamMan.players);
         });
 
         socket.on('connect', () => {
@@ -144,6 +118,7 @@ const Game = () => {
     //Draw the game and move the player with a tick rate of 60 times per second
     useEffect(() => {
         const tick = setInterval(() => {
+
             //get canvas and context
             const canvasPl = document.getElementById('cvPlayers');
             const ctxPl = canvasPl.getContext('2d');
