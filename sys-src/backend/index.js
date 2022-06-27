@@ -169,11 +169,6 @@ io.on("connection", (socket) => {
   });
 
   function startCountdown(room) {
-    io.in(room).emit("startCountdown", {});
-  }
-
-  function startGame(room)
-  {
     if(lobbys[room])
     {
       const clients = io.sockets.adapter.rooms.get(room);
@@ -218,8 +213,13 @@ io.on("connection", (socket) => {
 
       console.log("clientDictionary");
       console.log(clientDictionary);
-      io.to(room).emit("gameStarted", { clientDictionary });
+      io.to(room).emit("startCountdown", { clientDictionary });
     }
+  }
+
+  function startGame(room)
+  {
+    io.to(room).emit("gameStarted", {  });
   }
 
   socket.on("playerState", (data) => {

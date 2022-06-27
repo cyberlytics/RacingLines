@@ -12,8 +12,9 @@ export class GameManager {
         this.clientInput = { InputLeft: false, InputRight: false };
         this.timeSinceLastHole = new Date().getTime();
         this.clientId = Socket.id;
-        this.gameRunning = false;
+        this.roundStarted = false;
         this.callbacks = [];
+        this.countdownStarted = false;
     }
 
     addplayer(player) {
@@ -27,14 +28,14 @@ export class GameManager {
     }
 
     setUpRound() {
-        if (this.gameRunning === false)
+        if (this.roundStarted === false)
             this.ServerCommunicationHelper.startGame();
-        this.gameRunning = true;
+        this.roundStarted = true;
     }
 
     //update the game state
     updateGameState(deltaTime, ctx) {
-        if (this.gameRunning) {
+        if (this.roundStarted) {
             this.players.forEach((player) => {
                 if (
                     player.id !== this.clientId &&
@@ -149,6 +150,14 @@ export class GameManager {
         this.Renderer.drawLines(this.players, this.boardSize, canvas, ctx);
     }
 
+    drawCountdown(canvas, ctx, num) {
+        this.Renderer.drawCountdown(this.players, this.boardSize, canvas, ctx, num);
+    }
+
+    clearCountdown(canvas, ctx) {
+        this.Renderer.clearCountdown(canvas, ctx);
+    }
+
     subscribe(callback) {
         this.callbacks.push(callback);
     }
@@ -164,4 +173,5 @@ export class GameManager {
             this.callbacks[i](this); // this = player object
         }
     }
+
 }

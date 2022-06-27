@@ -18,6 +18,8 @@ const Game = () => {
     const room = roomParam.get('room');
     GamMan.ServerCommunicationHelper.setRoom(room);
 
+    let countDownTime = null;
+
     useEffect(() => {
 
         socket.on('newPlayerState', (data) => {
@@ -33,7 +35,7 @@ const Game = () => {
             }
         });
 
-        socket.on('gameStarted', (data) => {
+        socket.on('startCountdown', (data) => {
             let clientDictionary = data.clientDictionary;
             console.log(clientDictionary);
             //while (GamMan.players.length > 0) GamMan.players.pop();
@@ -49,13 +51,26 @@ const Game = () => {
                 );
                 player.addToPlayerStateBuffer(value.x, value.y, true);
                 GamMan.addplayer(player);
-                GamMan.gameRunning = true;
             });
             GamMan.updatePlayerScores();
             GamMan.players.forEach((player) => {
                 player.addScore(0);
             });
+
             console.log(GamMan.players);
+            GamMan.countdownStarted = true;
+            countDownTime = new Date().getTime();
+
+        });
+
+        socket.on('gameStarted', (data) => {
+
+            const canvasCo = document.getElementById("cvCountdown");
+            const ctxCo = canvasCo.getContext("2d");
+            GamMan.clearCountdown(canvasCo, ctxCo);
+
+            GamMan.countdownStarted = false;
+            GamMan.roundStarted = true;
         });
 
         socket.on('connect', () => {
@@ -107,6 +122,7 @@ const Game = () => {
         });
     });
 
+
     //Draw the game and move the player with a tick rate of 60 times per second
     useEffect(() => {
         const tick = setInterval(() => {
@@ -118,34 +134,46 @@ const Game = () => {
             const canvasLi = document.getElementById('cvLines');
             const ctxLi = canvasLi.getContext('2d');
 
+            const canvasCo = document.getElementById("cvCountdown");
+            const ctxCo = canvasCo.getContext("2d");
+
             let varNow = new Date().getTime();
             let deltaTime = (varNow - GamMan.lastTick) / 1000;
             GamMan.lastTick = varNow;
             GamMan.drawLines(canvasLi, ctxLi);
             GamMan.drawPlayers(canvasPl, ctxPl);
+            if(GamMan.countdownStarted)
+            {
+                GamMan.drawCountdown(canvasCo, ctxCo, (3 - Math.floor((new Date().getTime() - countDownTime) / 1000)));
+            }
             GamMan.updateGameState(deltaTime, ctxLi);
         }, 1000 / 60);
         return () => clearInterval(tick);
     });
 
-    return (
-        <div>
-            <canvas
-                id={'cvPlayers'}
-                width={boardSize}
-                height={boardSize}
-                className={'gameCanvas'}
-                style={{ zIndex: 2 }}
-            ></canvas>
-            <canvas
-                id={'cvLines'}
-                width={boardSize}
-                height={boardSize}
-                className={'gameCanvas'}
-                style={{ zIndex: 1 }}
-            ></canvas>
-            <Scoreboard gameManager={GamMan} />
-        </div>
-    );
+  return (
+    <div>
+      <canvas
+        id={"cvCountdown"}
+        width={boardSize}
+        height={boardSize}
+        style={{ zIndex: 3, position: "absolute", top: 0, left: 0 }}
+      ></canvas>
+      <canvas
+        id={"cvPlayers"}
+        width={boardSize}
+        height={boardSize}
+        style={{ zIndex: 2, position: "absolute", top: 0, left: 0 }}
+      ></canvas>
+      <canvas
+        id={"cvLines"}
+        width={boardSize}
+        height={boardSize}
+        style={{ zIndex: 1, position: "absolute", top: 0, left: 0 }}
+      ></canvas>
+        <Scoreboard gameManager={GamMan} />
+    </div>
+  );
+
 };
 export default Game;
