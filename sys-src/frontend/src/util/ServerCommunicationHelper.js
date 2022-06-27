@@ -4,10 +4,9 @@ export class ServerCommunicationHelper {
     this.room = "";
   }
 
-  //join the game room
-  joinRoom(roomName, player) {
-    this.Socket.emit("join_room", { roomName, player });
-    this.room = roomName;
+  setRoom(room)
+  {
+    this.room = room;
   }
 
   //send the player input to the server
