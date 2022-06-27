@@ -159,12 +159,24 @@ io.on("connection", (socket) => {
   socket.on("clickedPlay", (data) => {
     const timestamp = new Date().getTime() + 3000;
     io.in(data.room).emit("startGame", {'timestamp': timestamp, "players": lobbys[data.room]});
+
+    setTimeout(startCountdown, 250, data.room);
+    setTimeout(startGame, 3500, data.room);
   });
 
   socket.on("startGame", (data) => {
-    if(lobbys[data.room])
+    startGame(data.room);
+  });
+
+  function startCountdown(room) {
+    io.in(room).emit("startCountdown", {});
+  }
+
+  function startGame(room)
+  {
+    if(lobbys[room])
     {
-      const clients = io.sockets.adapter.rooms.get(data.room);
+      const clients = io.sockets.adapter.rooms.get(room);
       const clientDictionary = {};
       let minDist = 300;
       let p = new Poisson({
@@ -184,7 +196,7 @@ io.on("connection", (socket) => {
       console.log(p.fill());
       let counter = 0;
       clients.forEach((client) => {
-        if(lobbys[data.room][client])
+        if(lobbys[room][client])
         {
           let xposition = p.fill()[counter][0] + 100;
           let yposition = p.fill()[counter][1] + 100;
@@ -198,7 +210,7 @@ io.on("connection", (socket) => {
             x: xposition,
             y: yposition,
             direction: Math.floor(Math.random() * (360 - 1 + 1)) + 1,
-            player: lobbys[data.room][client]
+            player: lobbys[room][client]
           };
           counter += 1;
         }
@@ -206,9 +218,9 @@ io.on("connection", (socket) => {
 
       console.log("clientDictionary");
       console.log(clientDictionary);
-      io.to(data.room).emit("gameStarted", { clientDictionary });
+      io.to(room).emit("gameStarted", { clientDictionary });
     }
-  });
+  }
 
   socket.on("playerState", (data) => {
     let positionX = data.positionX;
