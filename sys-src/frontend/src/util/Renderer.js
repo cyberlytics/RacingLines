@@ -43,6 +43,7 @@ export class Renderer {
       //move to the first point
       if (player.isDrawing) {
         ctx.strokeStyle = player.lineColor;
+        ctx.beginPath();
         ctx.moveTo(player.lastX, player.lastY);
         let xc = (player.lastX + player.positionX) / 2;
         let yc = (player.lastY + player.positionY) / 2;
@@ -109,6 +110,14 @@ export class Renderer {
   }
 
   clearCountdown(canvas, ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  clearPlayers(canvas, ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  clearLines(canvas, ctx) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 }
