@@ -37,7 +37,7 @@ testbackend:
     - npm test
     
 deployment:
-  type: deploy
+  stage: deploy
   script:
     - ssh root@89.58.43.235 "cd racinglines && git pull origin development && cd sys-src/backend && npm install && cd .. && cd frontend && npm install && pm2 restart backend && pm2 restart frontend"
   only:
