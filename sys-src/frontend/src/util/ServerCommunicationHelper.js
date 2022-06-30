@@ -10,9 +10,9 @@ export class ServerCommunicationHelper {
   }
 
   //send the player input to the server
-  sendClientPlayerState(positionX, positionY, isDrawing) {
+  sendClientPlayerState(positionX, positionY, isDrawing, isAlive) {
     let room = this.room;
-    this.Socket.emit("playerState", { room, positionX, positionY, isDrawing });
+    this.Socket.emit("playerState", { room, positionX, positionY, isDrawing, isAlive });
   }
 
   //start the game

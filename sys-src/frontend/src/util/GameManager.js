@@ -69,7 +69,8 @@ export class GameManager {
                     this.ServerCommunicationHelper.sendClientPlayerState(
                         player.positionX,
                         player.positionY,
-                        player.isDrawing
+                        player.isDrawing,
+                        player.isAlive
                     );
                 }
                 //if(0) this.stopDrawing(player, this.randomNum(100, 300));
@@ -142,6 +143,7 @@ export class GameManager {
         return true;
     }
 
+
     drawPlayers(canvas, ctx) {
         this.Renderer.drawPlayers(this.players, this.boardSize, canvas, ctx);
     }
@@ -156,6 +158,20 @@ export class GameManager {
 
     clearCountdown(canvas, ctx) {
         this.Renderer.clearCountdown(canvas, ctx);
+    }
+
+    //clearLines
+    clearLines(canvas, ctx) {
+        this.Renderer.clearLines(canvas, ctx);
+    }
+
+    //clearPlayers
+    clearPlayers(canvas, ctx) {
+        this.Renderer.clearPlayers(canvas, ctx);
+    }
+
+    resetPlayers() {
+        this.players = [];
     }
 
     subscribe(callback) {
