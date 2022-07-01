@@ -60,9 +60,35 @@ describe("Test if drawLines() draws lines of players on canvas", () => {
   player[0] = player1;
   player[1] = player2;
 
-  const renderer = new Renderer();  
+  const renderer = new Renderer();
+  renderer.borderDrawn = true;
 
-  test("", () => {
+  test("Test drawLines with borderDrawn is true", () => {
+    renderer.drawLines(player, 0, canvas, ctx);
+
+    //Saves method calls
+    const events = ctx.__getEvents();
+
+    expect(events).toMatchSnapshot();
+  })
+})
+
+describe("Test if drawLines() draws lines of players on canvas", () => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  const player1 = new Player("TestPlayer1", 1, "red", "red", "100", "100", Math.PI);
+  const player2 = new Player("TestPlayer2", 2, "blue", "blue", 400, 400, Math.PI); 
+  player2.isDrawing = false;
+
+  let player = [];
+
+  player[0] = player1;
+  player[1] = player2;
+
+  const renderer = new Renderer();
+  renderer.borderDrawn = false;
+
+  test("Test drawLines with borderDrawn is false", () => {
     renderer.drawLines(player, 0, canvas, ctx);
 
     //Saves method calls
