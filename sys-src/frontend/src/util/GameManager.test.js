@@ -5,6 +5,7 @@ import {drawPlayers} from "./Renderer";
 import { Player } from "./Player";
 import { ServerCommunicationHelper } from "./ServerCommunicationHelper";
 const {canvas}=require('jest-canvas-mock');
+import 'core-js';
 
 const {Renderer} = require('./Renderer');
 const mockMath = Object.create(global.Math);
