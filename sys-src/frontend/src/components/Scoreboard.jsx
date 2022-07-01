@@ -46,7 +46,7 @@ export default function Scoreboard({ gameManager }) {
         // Subscribe each player for changes
         return () =>
             // Unsubscribe when component is destroyed
-            gameManager.players.unsubscribe(subscribe2players);
+            gameManager.unsubscribe(subscribe2players);
         //eslint-disable-next-line
     }, []);
 
@@ -80,9 +80,9 @@ export default function Scoreboard({ gameManager }) {
             <div className={classes.scoreboard}>
                 <h2 className={classes.scoreHeader}>S c o r e</h2>
                 {players.map((player) => (
-                    <div className={classes.playerScore} key={player.id}>
-                        <p className={classes.name}>{`${player.name}: `}</p>
-                        <p className={classes.score}>{`${player.score}`}</p>
+                    <div className={classes.playerScore} key={player.id} data-testid={player.id}>
+                        <p className={classes.name} data-testid={player.id+"name"}>{`${player.name}: `}</p>
+                        <p className={classes.score} data-testid={player.id+"score"}>{`${player.score}`}</p>
                     </div>
                 ))}
             </div>
