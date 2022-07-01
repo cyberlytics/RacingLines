@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Test if drawLines() draws lines of players on canvas  1`] = `
+exports[`Test if drawLines() draws lines of players on canvas Test drawLines with borderDrawn is false 1`] = `
 Array [
   Object {
     "props": Object {
@@ -30,6 +30,39 @@ Array [
     ],
     "type": "lineWidth",
   },
+  Object {
+    "props": Object {
+      "value": "#ff0000",
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "strokeStyle",
+  },
+  Object {
+    "props": Object {
+      "value": 7.699999999999999,
+    },
+    "transform": Array [
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+    ],
+    "type": "lineWidth",
+  },
+]
+`;
+
+exports[`Test if drawLines() draws lines of players on canvas Test drawLines with borderDrawn is true 1`] = `
+Array [
   Object {
     "props": Object {
       "value": "#ff0000",
