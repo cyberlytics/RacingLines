@@ -11,9 +11,10 @@ export class GameManager {
         this.boardSize = boardSize;
         this.clientInput = { InputLeft: false, InputRight: false };
         this.timeSinceLastHole = new Date().getTime();
-        this.clientId = '';
-        this.gameRunning = false;
+        this.clientId = Socket.id;
+        this.roundStarted = false;
         this.callbacks = [];
+        this.countdownStarted = false;
     }
 
     addplayer(player) {
@@ -21,15 +22,20 @@ export class GameManager {
         this.updateObservers();
     }
 
+    updatePlayerScores()
+    {
+        this.updateObservers();
+    }
+
     setUpRound() {
-        if (this.gameRunning === false)
+        if (this.roundStarted === false)
             this.ServerCommunicationHelper.startGame();
-        this.gameRunning = true;
+        this.roundStarted = true;
     }
 
     //update the game state
     updateGameState(deltaTime, ctx) {
-        if (this.gameRunning) {
+        if (this.roundStarted) {
             this.players.forEach((player) => {
                 if (
                     player.id !== this.clientId &&
@@ -92,12 +98,6 @@ export class GameManager {
         player.isDrawing = true;
     }
 
-    startRound(players, boardSize) {
-        this.setUpRound(players, boardSize);
-        this.firstTick = new Date().getTime();
-        this.lastTick = new Date().getTime();
-    }
-
     //check if the player is colliding with the lines drawn to the canvas
     checkCollision(player, ctx) {
         if (!player.isAlive) return;
@@ -150,6 +150,14 @@ export class GameManager {
         this.Renderer.drawLines(this.players, this.boardSize, canvas, ctx);
     }
 
+    drawCountdown(canvas, ctx, num) {
+        this.Renderer.drawCountdown(this.players, this.boardSize, canvas, ctx, num);
+    }
+
+    clearCountdown(canvas, ctx) {
+        this.Renderer.clearCountdown(canvas, ctx);
+    }
+
     subscribe(callback) {
         this.callbacks.push(callback);
     }
@@ -165,4 +173,5 @@ export class GameManager {
             this.callbacks[i](this); // this = player object
         }
     }
+
 }
