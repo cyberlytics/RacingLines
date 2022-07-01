@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import { createMemoryHistory } from 'history';
 import App from './App';
 import Home from './Home';
+import 'core-js';
 
 describe("Test if App renders correctly", () => {
     test("Test if header 'Racing Lines' is showm", () => {
