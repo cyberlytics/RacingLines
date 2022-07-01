@@ -1,7 +1,7 @@
 import {render, fireEvent} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Game from "./Game";
-
+import 'core-js';
 
 //test if test is set up correctly
 test("Sanity check", () => {
