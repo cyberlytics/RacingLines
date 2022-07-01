@@ -35,10 +35,36 @@ const Game = () => {
             }
         });
 
+        socket.on('allPlayersDead', (data) => {
+            //get canvas and context
+            const canvasPl = document.getElementById('cvPlayers');
+            const ctxPl = canvasPl.getContext('2d');
+
+            const canvasLi = document.getElementById('cvLines');
+            const ctxLi = canvasLi.getContext('2d');
+
+            //next round
+            GamMan.roundCount++;
+            GamMan.roundStarted = false;
+            GamMan.countdownStarted = false;
+            GamMan.clearPlayers(canvasPl, ctxPl);
+            GamMan.clearLines(canvasLi, ctxLi);
+            GamMan.resetPlayers();
+            GamMan.Renderer.borderDrawn = false;
+
+            GamMan.updateObservers();
+            socket.emit("nextRound", {room});
+        });
+
+
         socket.on('startCountdown', (data) => {
             let clientDictionary = data.clientDictionary;
             console.log(clientDictionary);
             //while (GamMan.players.length > 0) GamMan.players.pop();
+            if (GamMan.players.length != 0) {
+                GamMan.players = [];
+            }
+
             Object.entries(clientDictionary).forEach(([key, value]) => {
                 let player = new Player(
                     value.player.Name,
@@ -147,6 +173,7 @@ const Game = () => {
                 GamMan.drawCountdown(canvasCo, ctxCo, (3 - Math.floor((new Date().getTime() - countDownTime) / 1000)));
             }
             GamMan.updateGameState(deltaTime, ctxLi);
+
         }, 1000 / 60);
         return () => clearInterval(tick);
     });

@@ -77,6 +77,7 @@ app.get("/single-score", (req, res) => {
 Set.prototype.getByIndex = function(index) { return [...this][index]; }
 
 let lobbys = {};
+let playersalivestatus = [];
 
 io.on("connection", (socket) => {
   socket.on("join_lobby", (data) => {
@@ -164,6 +165,13 @@ io.on("connection", (socket) => {
     setTimeout(startGame, 3500, data.room);
   });
 
+  socket.on("nextRound", (data) => {
+    playersalivestatus = {};
+
+    setTimeout(startCountdown, 250, data.room);
+    setTimeout(startGame, 3500, data.room);
+  });
+
   socket.on("startGame", (data) => {
     startGame(data.room);
   });
@@ -226,6 +234,7 @@ io.on("connection", (socket) => {
     let positionX = data.positionX;
     let positionY = data.positionY;
     let isDrawing = data.isDrawing;
+    let isAlive = data.isAlive;
     let playerId = socket.id;
     io.to(data.room).emit("newPlayerState", {
       positionX,
@@ -233,7 +242,32 @@ io.on("connection", (socket) => {
       isDrawing,
       playerId,
     });
+
+    checkifallplayersaredead(data.room, playerId, isAlive);
   });
+
+  //function to check if all clients are dead
+    function checkifallplayersaredead(room, playerId, isAlive){
+      //add player to list of players that are alive with room as key
+        if(isAlive)
+        {
+          playersalivestatus[room] = {};
+          playersalivestatus[room][playerId] = isAlive;
+        }
+        else
+        {
+          delete playersalivestatus[room][playerId];
+        }
+        //check if all players are dead
+        if(Object.keys(playersalivestatus[room]).length === 0)
+        {
+          io.to(room).emit("allPlayersDead", {});
+        }
+    }
+
+    socket.on("nextRound", (data) => {
+        playersalivestatus[data.room] = [];
+    });
 
   socket.on("disconnecting", () => {
     clearRoom();
