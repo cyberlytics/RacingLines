@@ -23,9 +23,9 @@ export default function GameTempo({parentMethod}) {
             <RadioGroup
                 row
             >
-                <FormControlLabel onChange={handleGameTempoChanged} value="easy" control={<Radio
+                <FormControlLabel onChange={handleGameTempoChanged} value="slow" control={<Radio
                     checked={selectedValue === "slow"}
-                    value="easy"
+                    value="slow"
                 />} label="Slow" />
                 <FormControlLabel onChange={handleGameTempoChanged} value="normal" control={<Radio
                     checked={selectedValue === "normal"}
