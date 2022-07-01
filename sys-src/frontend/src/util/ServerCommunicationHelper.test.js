@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
-
 const {ServerCommunicationHelper} = require('./ServerCommunicationHelper');
+import 'core-js';
 
 
 //Test if object has all functions
