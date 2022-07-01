@@ -114,15 +114,6 @@ function KeyBindings(){
       }
     }
 
-
-   /* // Added this to codepen only so that the blog readers can try it in the iframe.
-    var playButton = document.getElementById("play-button");
-    playButton.addEventListener('click', function() {
-    var preview = document.getElementById("preview");
-
-    preview.setAttribute("class", "hide");
-    });*/
-
 }
 
 export default KeyBindings;
