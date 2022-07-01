@@ -98,3 +98,63 @@ describe("Test if drawLines() draws lines of players on canvas", () => {
   })
 })
 
+describe("Test if drawCountdown() draws the correct countdown on canvas", () => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  const player1 = new Player("TestPlayer1", 1, "red", "red", "100", "100", Math.PI);
+  const player2 = new Player("TestPlayer2", 2, "blue", "blue", 400, 400, Math.PI);
+
+
+  const countDownCanvas = document.createElement("canvas");
+  const countDownctx = canvas.getContext("2d");
+
+  let player = [];
+
+  player[0] = player1;
+  player[1] = player2;
+
+  const renderer = new Renderer();
+
+  test("Test if the countdown matches the snapshot.", () => {
+    renderer.drawPlayers(player, 0, canvas, ctx);
+    renderer.drawCountdown(player, 0, countDownCanvas, countDownctx, 1);
+
+    //Saves method calls
+    const events = ctx.__getEvents();
+
+    expect(events).toMatchSnapshot();
+  })
+
+})
+
+
+describe("Test if clearCountdown() clears the countdown on canvas", () => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  const player1 = new Player("TestPlayer1", 1, "red", "red", "100", "100", Math.PI);
+  const player2 = new Player("TestPlayer2", 2, "blue", "blue", 400, 400, Math.PI);
+
+
+  const countDownCanvas = document.createElement("canvas");
+  const countDownctx = canvas.getContext("2d");
+
+  let player = [];
+
+  player[0] = player1;
+  player[1] = player2;
+
+  const renderer = new Renderer();
+
+  test("Test if the countdown was cleared and matches the snapshot.", () => {
+    renderer.drawPlayers(player, 0, canvas, ctx);
+    renderer.drawCountdown(player, 0, countDownCanvas, countDownctx, 1);
+    renderer.clearCountdown(countDownCanvas,countDownctx);
+
+    //Saves method calls
+    const events = ctx.__getEvents();
+
+    expect(events).toMatchSnapshot();
+  })
+
+})
+
