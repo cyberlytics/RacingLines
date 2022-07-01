@@ -47,8 +47,8 @@ const grid_classes = {
       fontFamily: "Roboto"
     }
   };
-    const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
 
+const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
 
     const Lobby = () => {
 
@@ -91,6 +91,22 @@ const grid_classes = {
         });
         socket.on('onGameTempoChanged', (data) => {
             setPlayerList(data.joinedPlayers);
+        });
+        socket.on('startGame', (data) => {
+            let route = "/Game?room=" + room + "game";
+            for (const [key, player] of Object.entries(data.players)) {
+                if(player.Id == socket.id) {
+                    console.log(player);
+                    navigate(route, {state:{
+                            Name: player.Name,
+                            PlayerColor: player.PlayerColor,
+                            LineColor: player.LineColor,
+                            CanvasSize: player.CanvasSize,
+                            GameTempo: player.GameTempo,
+                            timestamp: data.timestamp}});
+                    break;
+                }
+            }
         });
     }, [socket]);
 
@@ -146,7 +162,7 @@ const grid_classes = {
 
         const navigate = useNavigate();
         function startGame(event){
-            //WIP
+            socket.emit("clickedPlay", {room});
         }
 
         return (
