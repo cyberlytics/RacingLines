@@ -23,60 +23,73 @@ const Game = () => {
     useEffect(() => {
 
         socket.on('newPlayerState', (data) => {
-            for (let i = 0; i < GamMan.players.length; i++) {
-                if (GamMan.players[i].id === data.playerId) {
-                    //console.log('updating player');
-                    GamMan.players[i].addToPlayerStateBuffer(
-                        data.positionX,
-                        data.positionY,
-                        data.isDrawing
-                    );
-                }
-            }
+            handleNewPlayerState(data);
         });
 
         socket.on('startCountdown', (data) => {
-            let clientDictionary = data.clientDictionary;
-            console.log(clientDictionary);
-            //while (GamMan.players.length > 0) GamMan.players.pop();
-            Object.entries(clientDictionary).forEach(([key, value]) => {
-                let player = new Player(
-                    value.player.Name,
-                    key,
-                    value.player.PlayerColor,
-                    value.player.LineColor,
-                    value.x,
-                    value.y,
-                    value.direction
-                );
-                player.addToPlayerStateBuffer(value.x, value.y, true);
-                GamMan.addplayer(player);
-            });
-            GamMan.updatePlayerScores();
-            GamMan.players.forEach((player) => {
-                player.addScore(0);
-            });
-
-            console.log(GamMan.players);
-            GamMan.countdownStarted = true;
-            countDownTime = new Date().getTime();
-
+            handelOnCountdownStarted(data)
         });
 
         socket.on('gameStarted', (data) => {
-
-            const canvasCo = document.getElementById("cvCountdown");
-            const ctxCo = canvasCo.getContext("2d");
-            GamMan.clearCountdown(canvasCo, ctxCo);
-
-            GamMan.countdownStarted = false;
-            GamMan.roundStarted = true;
+            handleOnGameStarted(data);
         });
 
         socket.on('connect', () => {
             GamMan.clientId = socket.id;
         });
     }, [socket]);
+
+    function handleNewPlayerState (data)
+    {
+        for (let i = 0; i < GamMan.players.length; i++) {
+            if (GamMan.players[i].id === data.playerId) {
+                //console.log('updating player');
+                GamMan.players[i].addToPlayerStateBuffer(
+                    data.positionX,
+                    data.positionY,
+                    data.isDrawing
+                );
+            }
+        }
+    }
+
+    function handleOnGameStarted (data)
+    {
+        const canvasCo = document.getElementById("cvCountdown");
+        const ctxCo = canvasCo.getContext("2d");
+        GamMan.clearCountdown(canvasCo, ctxCo);
+
+        GamMan.countdownStarted = false;
+        GamMan.roundStarted = true;
+    }
+
+    function handelOnCountdownStarted (data)
+    {
+        let clientDictionary = data.clientDictionary;
+        console.log(clientDictionary);
+        //while (GamMan.players.length > 0) GamMan.players.pop();
+        Object.entries(clientDictionary).forEach(([key, value]) => {
+            let player = new Player(
+                value.player.Name,
+                key,
+                value.player.PlayerColor,
+                value.player.LineColor,
+                value.x,
+                value.y,
+                value.direction
+            );
+            player.addToPlayerStateBuffer(value.x, value.y, true);
+            GamMan.addplayer(player);
+        });
+        GamMan.updatePlayerScores();
+        GamMan.players.forEach((player) => {
+            player.addScore(0);
+        });
+
+        console.log(GamMan.players);
+        GamMan.countdownStarted = true;
+        countDownTime = new Date().getTime();
+    }
 
     let RightKeyPressed = false;
     let LeftKeyPressed = false;

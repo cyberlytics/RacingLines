@@ -51,11 +51,6 @@ describe("Test if player has all functions of the class Player", () => {
         expect(typeof gameManager.resumeDrawing).toBe("function");
     })
 
-    /*
-    test("Test if startRound() gets defined", () => {
-        expect(typeof gameManager.startRound).toBe("function");
-    })*/
-
     test("Test if checkCollision() gets defined", () => {
         expect(typeof gameManager.checkCollision).toBe("function");
     })
@@ -388,28 +383,6 @@ describe("Test if the drawing of the player is resumed",()=>{
         expect(player.isDrawing).toBe(true);
     })
 })
-
-//Test function startRound
-/*
-describe("Test if function StartRound is working ",()=>{
-    const gameManager= new GameManager(io.connect(process.env.REACT_APP_IPAddress + ":3001"), 500);
-    const player1= new Player("Tester1", 1, "orange", "orange", "100", "100", Math.PI);
-    const players=[];
-    players[0]=player1;
-    const mockdate= new Date().getTime();
-
-    gameManager.startRound(players, 500);
-   test("Test if the SetUp function is called ", () => {
-        expect(gameManager.setUpRound()).toBeCalled;
-    })
-  
-    test("Test if the Player is getting drawn again", () => {
-        expect(gameManager.firstTick).toEqual(mockdate);
-    })
-    test("Test if the Player is getting drawn again", () => {
-        expect(gameManager.lastTick).toEqual(mockdate);
-    })
-})*/
 
 //Test function CheckCollision
 describe("Test if CheckCollision is working",()=>{
