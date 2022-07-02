@@ -10,7 +10,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import PlayerColors from './components/PlayerColors';
 import { TextField } from '@material-ui/core';
-import {v4 as uuidv4} from 'uuid';
+import  socket  from './util/socketConfig';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -48,7 +48,7 @@ const grid_classes = {
     }
   };
 
-const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
+//const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
 
     const Lobby = () => {
 
@@ -61,6 +61,11 @@ const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
     const clientNameRef = useRef();
 
     useEffect(() => {
+        //removes the socket from the room it was last connected to
+        const clearRoom = () => {
+            socket.emit("clearRoom", {});
+        };
+        clearRoom();
 
         const joinRoom = () => {
             if (room !== "") {
@@ -93,20 +98,8 @@ const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
             setPlayerList(data.joinedPlayers);
         });
         socket.on('startGame', (data) => {
-            let route = "/Game?room=" + room + "game";
-            for (const [key, player] of Object.entries(data.players)) {
-                if(player.Id == socket.id) {
-                    console.log(player);
-                    navigate(route, {state:{
-                            Name: player.Name,
-                            PlayerColor: player.PlayerColor,
-                            LineColor: player.LineColor,
-                            CanvasSize: player.CanvasSize,
-                            GameTempo: player.GameTempo,
-                            timestamp: data.timestamp}});
-                    break;
-                }
-            }
+            let route = "/Game?room=" + room;
+            navigate(route, {});
         });
     }, [socket]);
 

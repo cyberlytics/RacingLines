@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import game from "./Game";
 
 const useStyles = makeStyles({
     scoreboard: {
-        width: '200px',
+        width: '280px',
         borderRadius: 5,
         background: 'rgb(40,44,52)',
         color: 'white',
@@ -27,6 +28,8 @@ const useStyles = makeStyles({
         marginLeft: '20px',
         marginRight: '20px',
         marginBottom: '20px',
+        justifyContent: 'space-between',
+        display: 'flex',
     },
     name: {
         display: 'inline',
@@ -46,13 +49,15 @@ export default function Scoreboard({ gameManager }) {
         // Subscribe each player for changes
         return () =>
             // Unsubscribe when component is destroyed
-            gameManager.players.unsubscribe(subscribe2players);
+            gameManager.unsubscribe(subscribe2players);
         //eslint-disable-next-line
     }, []);
 
     const subscribe2players = () => {
+        players.forEach((player) => {
+            player.unsubscribe(update);
+        });
         setPlayers(gameManager.players);
-        console.log(players);
         players.forEach((player) => {
             player.subscribe(update);
         });
@@ -80,9 +85,9 @@ export default function Scoreboard({ gameManager }) {
             <div className={classes.scoreboard}>
                 <h2 className={classes.scoreHeader}>S c o r e</h2>
                 {players.map((player) => (
-                    <div className={classes.playerScore} key={player.id}>
-                        <p className={classes.name}>{`${player.name}: `}</p>
-                        <p className={classes.score}>{`${player.score}`}</p>
+                    <div className={classes.playerScore} key={player.id} data-testid={player.id}>
+                        <p className={classes.name} data-testid={player.id+"name"}>{`${player.name}: `}</p>
+                        <p className={classes.score} data-testid={player.id+"score"}>{`${player.score}`}</p>
                     </div>
                 ))}
             </div>

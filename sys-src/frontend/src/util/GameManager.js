@@ -11,9 +11,10 @@ export class GameManager {
         this.boardSize = boardSize;
         this.clientInput = { InputLeft: false, InputRight: false };
         this.timeSinceLastHole = new Date().getTime();
-        this.clientId = '';
-        this.gameRunning = false;
+        this.clientId = Socket.id;
+        this.roundStarted = false;
         this.callbacks = [];
+        this.countdownStarted = false;
     }
 
     addplayer(player) {
@@ -21,15 +22,20 @@ export class GameManager {
         this.updateObservers();
     }
 
+    updatePlayerScores()
+    {
+        this.updateObservers();
+    }
+
     setUpRound() {
-        if (this.gameRunning === false)
+        if (this.roundStarted === false)
             this.ServerCommunicationHelper.startGame();
-        this.gameRunning = true;
+        this.roundStarted = true;
     }
 
     //update the game state
     updateGameState(deltaTime, ctx) {
-        if (this.gameRunning) {
+        if (this.roundStarted) {
             this.players.forEach((player) => {
                 if (
                     player.id !== this.clientId &&
@@ -63,7 +69,8 @@ export class GameManager {
                     this.ServerCommunicationHelper.sendClientPlayerState(
                         player.positionX,
                         player.positionY,
-                        player.isDrawing
+                        player.isDrawing,
+                        player.isAlive
                     );
                 }
                 //if(0) this.stopDrawing(player, this.randomNum(100, 300));
@@ -90,12 +97,6 @@ export class GameManager {
 
     resumeDrawing(player) {
         player.isDrawing = true;
-    }
-
-    startRound(players, boardSize) {
-        this.setUpRound(players, boardSize);
-        this.firstTick = new Date().getTime();
-        this.lastTick = new Date().getTime();
     }
 
     //check if the player is colliding with the lines drawn to the canvas
@@ -142,12 +143,35 @@ export class GameManager {
         return true;
     }
 
+
     drawPlayers(canvas, ctx) {
         this.Renderer.drawPlayers(this.players, this.boardSize, canvas, ctx);
     }
 
     drawLines(canvas, ctx) {
         this.Renderer.drawLines(this.players, this.boardSize, canvas, ctx);
+    }
+
+    drawCountdown(canvas, ctx, num) {
+        this.Renderer.drawCountdown(this.players, this.boardSize, canvas, ctx, num);
+    }
+
+    clearCountdown(canvas, ctx) {
+        this.Renderer.clearCountdown(canvas, ctx);
+    }
+
+    //clearLines
+    clearLines(canvas, ctx) {
+        this.Renderer.clearLines(canvas, ctx);
+    }
+
+    //clearPlayers
+    clearPlayers(canvas, ctx) {
+        this.Renderer.clearPlayers(canvas, ctx);
+    }
+
+    resetPlayers() {
+        this.players = [];
     }
 
     subscribe(callback) {
@@ -165,4 +189,5 @@ export class GameManager {
             this.callbacks[i](this); // this = player object
         }
     }
+
 }
