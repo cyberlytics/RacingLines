@@ -4,7 +4,7 @@ import game from "./Game";
 
 const useStyles = makeStyles({
     scoreboard: {
-        width: '200px',
+        width: '280px',
         borderRadius: 5,
         background: 'rgb(40,44,52)',
         color: 'white',
@@ -28,6 +28,8 @@ const useStyles = makeStyles({
         marginLeft: '20px',
         marginRight: '20px',
         marginBottom: '20px',
+        justifyContent: 'space-between',
+        display: 'flex',
     },
     name: {
         display: 'inline',
