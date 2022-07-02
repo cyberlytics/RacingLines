@@ -184,19 +184,19 @@ const Game = () => {
         id={"cvCountdown"}
         width={boardSize}
         height={boardSize}
-        style={{ zIndex: 3, position: "absolute", top: 0, left: 0 }}
+        style={{ zIndex: 3, position: "absolute", top: 0, left: 300 }}
       ></canvas>
       <canvas
         id={"cvPlayers"}
         width={boardSize}
         height={boardSize}
-        style={{ zIndex: 2, position: "absolute", top: 0, left: 0 }}
+        style={{ zIndex: 2, position: "absolute", top: 0, left: 300 }}
       ></canvas>
       <canvas
         id={"cvLines"}
         width={boardSize}
         height={boardSize}
-        style={{ zIndex: 1, position: "absolute", top: 0, left: 0 }}
+        style={{ zIndex: 1, position: "absolute", top: 0, left: 300 }}
       ></canvas>
         <Scoreboard gameManager={GamMan} />
     </div>
