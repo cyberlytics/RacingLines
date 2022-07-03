@@ -4,7 +4,7 @@ import Lobby from "./Lobby";
 import Home from "./Home";
 import Game from "./components/Game";
 import Snackbar from "./components/SnackBarField";
-import React, { Component } from "react";
+import React from "react";
 
 
 

@@ -11,7 +11,7 @@ export default function SnackBarField() {
   
 
   const handleToClose = (event, reason) => {
-    if ("clickaway" == reason) return;
+    if ("clickaway" === reason) return;
     setOpen(false);
   };
 
