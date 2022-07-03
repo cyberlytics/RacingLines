@@ -48,17 +48,25 @@ const grid_classes = {
     }
   };
 
-//const socket = io.connect(process.env.REACT_APP_IPAddress+":3001");
 
     const Lobby = () => {
 
     const classes = useStyles();
 
-    const [playerList,setPlayerList] = useState([]);
+    const [playerList,setPlayerList] = useState([{
+        Id: socket.id,
+        Name: "player",
+        PlayerColor: "green",
+        LineColor: "black",
+        CanvasSize: "medium",
+        GameTempo: "normal",
+        Score: 0
+    }]);
 
     const [roomParam] = useSearchParams();
     const room = roomParam.get("room");
     const clientNameRef = useRef();
+
 
     useEffect(() => {
         //removes the socket from the room it was last connected to
