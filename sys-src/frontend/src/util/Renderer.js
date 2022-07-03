@@ -32,7 +32,7 @@ export class Renderer {
           //draws the game border
           ctx.rect(0, 0, canvas.width, canvas.height);
           //lineWidth is the width of the border
-        ctx.closePath();
+          ctx.closePath();
           ctx.stroke();
           this.borderDrawn = true;
       }
