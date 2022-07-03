@@ -18,8 +18,9 @@ describe("Test if scoreboard updates correctly when player score changes", () =>
     const gameManager = new GameManager(io.connect(process.env.REACT_APP_IPAddress + ":3001"), 500);
     const player = new Player("Test", 1, "red", "blue", 100, 100, Math.PI);
 
-    player.addScore(0);
     gameManager.addplayer(player);
+    gameManager.updateObservers();
+    player.addScore(0);
 
     test("Test if player element gets created.", () => {
         const {getByTestId} = render(<Scoreboard gameManager={gameManager}/>);
@@ -41,6 +42,7 @@ describe("Test if scoreboard updates correctly when player score changes", () =>
         const testplayer = new Player("testChange", 2, "pink", "blue", 200, 200, Math.PI);
         act(() => {
             gameManager.addplayer(testplayer);
+            gameManager.updateObservers();
             testplayer.addScore(10);
         });
 
@@ -55,10 +57,11 @@ describe("Test if scoreboard updates correctly when player score changes", () =>
 
     test("Test add new player.", () => {
         const {getByTestId} = render(<Scoreboard gameManager={gameManager}/>);
-        const newplayer = new Player("new", 2, "pink", "blue", 200, 200, Math.PI);
+        const newplayer = new Player("new", 3, "pink", "blue", 200, 200, Math.PI);
 
         act(() => {
             gameManager.addplayer(newplayer);
+            gameManager.updateObservers();
             newplayer.addScore(10);
         });
 
