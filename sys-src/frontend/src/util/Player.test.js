@@ -138,13 +138,6 @@ describe("Test if move sets positions of the player if player is alive", () => {
         expect(player.lastY).toBe(150);
     })
 
-    /*test("Test if positionX is ", () => {
-        expect(player.positionX).toBe();
-    })
-
-    test("Test if positionY is ", () => {
-        expect(player.positionY).toBe();
-    })*/
 })
 
 describe("Test if move does not set positions of the player if player is not alive", () => {
@@ -300,15 +293,3 @@ describe("Test if addScore adds nothing to the score when player is dead", () =>
     })
 })
 
-
-//Test function subscribe
-describe("Test if callback", () => {
-    const player = new Player("Test", 1, "red", "blue", 100, 100, Math.PI);
-
-
-    player.subscribe(10);
-
-    test("Test if callback ", () => {
-        expect(player.callbacks.length).toBe(1);
-    })
-})

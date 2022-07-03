@@ -77,6 +77,8 @@ app.get("/single-score", (req, res) => {
 Set.prototype.getByIndex = function(index) { return [...this][index]; }
 
 let lobbys = {};
+let playersalivestatus = [];
+let round;
 
 io.on("connection", (socket) => {
   socket.on("join_lobby", (data) => {
@@ -89,6 +91,7 @@ io.on("connection", (socket) => {
       LineColor: "black",
       CanvasSize: "medium",
       GameTempo: "normal",
+      Score: 0
     };
 
     const clients = io.sockets.adapter.rooms.get(data.room);
@@ -158,94 +161,153 @@ io.on("connection", (socket) => {
 
   socket.on("clickedPlay", (data) => {
     const timestamp = new Date().getTime() + 3000;
-    io.in(data.room).emit("startGame", {'timestamp': timestamp, "players": lobbys[data.room]});
+    io.in(data.room).emit("startGame", {});
+    round = 0;
+
+    setTimeout(startCountdown, 250, data.room);
+    setTimeout(startGame, 3500, data.room);
   });
 
-  socket.on("join_room", (data) => {
+  socket.on("nextRound", (data) => {
+    playersalivestatus = {};
+    round = data.roundCount;
 
-    if(!lobbys[data.roomName]) lobbys[data.roomName] = {};
-    if(data.player)
-    {
-      lobbys[data.roomName][socket.id] = data.player;
-      lobbys[data.roomName][socket.id].Id = socket.id;
+    console.log("roundCount: " + round);
+
+    if (round < 3) {
+        setTimeout(startCountdown, 250, data.room);
+        setTimeout(startGame, 3500, data.room);
     }
-    else
-    {
-      lobbys[data.roomName][socket.id] = {
-        Id: socket.id,
-        Name: "player",
-        PlayerColor: "green",
-        LineColor: "black",
-        CanvasSize: "medium",
-        GameTempo: "normal",
-      };
+    else {
+        setTimeout(startCountdown, 10, data.room);
+        setTimeout(endGame, 10, data.room);
     }
-    socket.join(data.roomName);
   });
 
   socket.on("startGame", (data) => {
-    const clients = io.sockets.adapter.rooms.get(data.room);
-    const clientDictionary = {};
-    let minDist = 300;
-    let p = new Poisson({
-      shape: [600, 600],
-      minDistance: minDist,
-      tries: 10,
-    });
-    while (p.fill().length < clients.size) {
-      p = new Poisson({
+    startGame(data.room);
+  });
+
+  function startCountdown(room) {
+    if(lobbys[room])
+    {
+      const clients = io.sockets.adapter.rooms.get(room);
+      const clientDictionary = {};
+      let minDist = 300;
+      let p = new Poisson({
         shape: [600, 600],
         minDistance: minDist,
         tries: 10,
       });
-      minDist -= 10;
-    }
-    console.log(clients.size + " " + p.fill().length);
-    console.log(p.fill());
-    let counter = 0;
-    clients.forEach((client) => {
-      let xposition = p.fill()[counter][0] + 100;
-      let yposition = p.fill()[counter][1] + 100;
-      console.log(
-        "x: " +
-          (p.fill()[counter][0] + 100) +
-          "y: " +
-          (p.fill()[counter][1] + 100)
-      );
-      clientDictionary[client] = {
-        x: xposition,
-        y: yposition,
-        direction: Math.floor(Math.random() * (360 - 1 + 1)) + 1,
-        player: lobbys[data.room][client]
-      };
-      counter += 1;
-    });
+      while (p.fill().length < clients.size) {
+        p = new Poisson({
+          shape: [600, 600],
+          minDistance: minDist,
+          tries: 10,
+        });
+        minDist -= 10;
+      }
+      console.log(clients.size + " " + p.fill().length);
+      console.log(p.fill());
+      let counter = 0;
+      clients.forEach((client) => {
+        if(lobbys[room][client])
+        {
+          let xposition = p.fill()[counter][0] + 100;
+          let yposition = p.fill()[counter][1] + 100;
+          console.log(
+              "x: " +
+              (p.fill()[counter][0] + 100) +
+              "y: " +
+              (p.fill()[counter][1] + 100)
+          );
+          clientDictionary[client] = {
+            x: xposition,
+            y: yposition,
+            direction: Math.floor(Math.random() * (360 - 1 + 1)) + 1,
+            player: lobbys[room][client]
+          };
+          counter += 1;
+        }
+      });
 
-    console.log("clientDictionary");
-    console.log(clientDictionary);
-    io.to(data.room).emit("gameStarted", { clientDictionary });
-  });
+      console.log("clientDictionary");
+      console.log(clientDictionary);
+      io.to(room).emit("startCountdown", { clientDictionary });
+    }
+  }
+
+  function startGame(room)
+  {
+    io.to(room).emit("gameStarted", {  });
+  }
+
+  function endGame(room)
+  {
+    io.in(room).emit("gameEnded", {room});
+  }
 
   socket.on("playerState", (data) => {
     let positionX = data.positionX;
     let positionY = data.positionY;
     let isDrawing = data.isDrawing;
+    let isAlive = data.isAlive;
     let playerId = socket.id;
+    lobbys[data.room][socket.id].Score = data.score;
+
     io.to(data.room).emit("newPlayerState", {
       positionX,
       positionY,
       isDrawing,
       playerId,
+      isAlive
     });
+
+    checkifallplayersaredead(data.room, playerId, isAlive);
   });
 
+  //function to check if all clients are dead
+    function checkifallplayersaredead(room, playerId, isAlive){
+      //add player to list of players that are alive with room as key
+        if(isAlive)
+        {
+          playersalivestatus[room] = {};
+          playersalivestatus[room][playerId] = isAlive;
+        }
+        else
+        {
+          delete playersalivestatus[room][playerId];
+        }
+        //check if all players are dead
+        if(Object.keys(playersalivestatus[room]).length === 0)
+        {
+          io.to(room).emit("allPlayersDead", {});
+        }
+    }
+
+    socket.on("nextRound", (data) => {
+        playersalivestatus[data.room] = [];
+    });
+
   socket.on("disconnecting", () => {
+    clearRoom();
+  });
+
+  socket.on("clearRoom", () => {
+    clearRoom();
+  });
+
+  function  clearRoom()
+  {
     let roomId = socket.rooms.getByIndex(1);
     if(lobbys[roomId])
     {
       if(lobbys[roomId][socket.id]) delete lobbys[roomId][socket.id];
-      if(io.sockets.adapter.rooms.get(roomId).size <= 1) delete lobbys[roomId];
+      if( Object.keys(lobbys[roomId]).length == 0) {
+        delete lobbys[roomId];
+      }
     }
-  });
+    if(roomId) socket.leave(roomId);
+  }
 
 });

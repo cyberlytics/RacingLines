@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
-
 const {ServerCommunicationHelper} = require('./ServerCommunicationHelper');
+import 'core-js';
 
 
 //Test if object has all functions
@@ -9,8 +9,8 @@ describe("Test if serverCommunicationHelper has all functions of the class Serve
     const socket = io.connect(process.env.REACT_APP_IPAddress + ":3001");
     const serverCommunicationHelper = new ServerCommunicationHelper(socket);
 
-    test("Test if joinRoom() is defined", () => {
-        expect(typeof serverCommunicationHelper.joinRoom).toBe("function");
+    test("Test if setRoom() is defined", () => {
+        expect(typeof serverCommunicationHelper.setRoom).toBe("function");
     })
 
     test("Test if sendClientPlayerState() is defined", () => {
@@ -43,13 +43,13 @@ describe("Test if constructor sets values correct", () => {
 
 
 //Test function joinRoom()
-describe("Test if joinRoom() sets values correctly", () => {
+describe("Test if setRoom() sets values correctly", () => {
     const socket = io.connect(process.env.REACT_APP_IPAddress + ":3001");
     const serverCommunicationHelper = new ServerCommunicationHelper(socket);
 
     const room = "fed98b5e-5745-4b77-b7e7-95c7af287a50";
 
-    serverCommunicationHelper.joinRoom(room);
+    serverCommunicationHelper.setRoom(room);
 
     test("Test if room from ServerCommunicationHelper Object is room from parameter", () => {
         expect(serverCommunicationHelper.room).toBe(room);

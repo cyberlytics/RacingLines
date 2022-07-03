@@ -21,12 +21,12 @@ npmbackend:
     paths:
       - sys-src/backend/node_modules/
 
-#testfrontend:
-#  stage: test
-#  script:
-#    - cd sys-src/frontend
-#    - npm install
-#    - npm test
+testfrontend:
+  stage: test
+  script:
+    - cd sys-src/frontend
+    - npm install
+    - npm test
 
 testbackend:
   stage: test
@@ -37,7 +37,7 @@ testbackend:
     - npm test
     
 deployment:
-  type: deploy
+  stage: deploy
   script:
     - ssh root@89.58.43.235 "cd racinglines && git pull origin development && cd sys-src/backend && npm install && cd .. && cd frontend && npm install && pm2 restart backend && pm2 restart frontend"
   only:

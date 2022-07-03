@@ -17,6 +17,7 @@ export default function CanvasSize({parentMethod}) {
         parentMethod(event);
         setSelectedValue(event.target.value);
     }
+
     return (
         <FormControl>
             <FormLabel>Choose a Game Size</FormLabel>
