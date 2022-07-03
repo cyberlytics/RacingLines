@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { GameManager } from '../util/GameManager';
-import io from 'socket.io-client';
-import { useSearchParams, useLocation  } from 'react-router-dom';
+import { useSearchParams  } from 'react-router-dom';
 import { Player } from '../util/Player';
 import Scoreboard from './Scoreboard';
 import  socket  from '../util/socketConfig';
@@ -60,7 +59,7 @@ const Game = () => {
 
         socket.on('startCountdown', (data) => {
             let clientDictionary = data.clientDictionary;
-            if (GamMan.players.length != 0) {
+            if (GamMan.players.length !== 0) {
                 while (GamMan.players.length > 0) GamMan.players.pop();
             }
 
