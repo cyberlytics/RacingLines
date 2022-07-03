@@ -65,7 +65,7 @@ export class GameManager {
                     this.checkCollision(player, ctx);
 
                     if (this.randomNum(1, 60) == 1)
-                        this.stopDrawing(player, this.randomNum(250, 350));
+                        this.stopDrawing(player, this.randomNum(300, 400));
                     this.ServerCommunicationHelper.sendClientPlayerState(
                         player.positionX,
                         player.positionY,
@@ -104,22 +104,20 @@ export class GameManager {
         if (!player.isAlive) return;
         for (let i = 0; i < 5; i++) {
             let rad = player.directionAngle + (Math.PI / 16) * i;
-            let posX = player.positionX + (player.size - 3) * Math.cos(rad);
-            let posY = player.positionY + (player.size - 3) * Math.sin(rad);
+            let posX = player.positionX + (player.size - 6) * Math.cos(rad);
+            let posY = player.positionY + (player.size - 6) * Math.sin(rad);
             let px = ctx.getImageData(posX, posY, 1, 1);
             if (!this.pixelIsWhite(px)) {
-                console.log("COLLISION->"+player.name);
                 player.isAlive = false;
                 this.increaseScore();
                 return;
             }
             if (i > 0) {
                 rad = player.directionAngle - (Math.PI / 16) * i;
-                posX = player.positionX + (player.size - 3) * Math.cos(rad);
-                posY = player.positionY + (player.size - 3) * Math.sin(rad);
+                posX = player.positionX + (player.size - 6) * Math.cos(rad);
+                posY = player.positionY + (player.size - 6) * Math.sin(rad);
                 px = ctx.getImageData(posX, posY, 1, 1);
                 if (!this.pixelIsWhite(px)) {
-                    console.log("COLLISION->"+player.name);
                     player.isAlive = false;
                     this.increaseScore();
                     return;
