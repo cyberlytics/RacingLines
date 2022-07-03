@@ -686,7 +686,7 @@ exports[`Test if drawLines() draws lines of players on canvas Test drawLines wit
 Array [
   Object {
     "props": Object {
-      "value": "#2196f3",
+      "value": "#000000",
     },
     "transform": Array [
       1,
