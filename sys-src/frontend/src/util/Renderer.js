@@ -24,15 +24,15 @@ export class Renderer {
   borderDrawn = false;
 
   drawLines(players, boardSize, canvas, ctx) {
-
       if(!this.borderDrawn)
       {
-          ctx.strokeStyle = "#2196f3";
+          ctx.beginPath();
+          ctx.strokeStyle = "black";
           ctx.lineWidth = 10;
           //draws the game border
-          ctx.beginPath();
           ctx.rect(0, 0, canvas.width, canvas.height);
           //lineWidth is the width of the border
+        ctx.closePath();
           ctx.stroke();
           this.borderDrawn = true;
       }
@@ -42,8 +42,8 @@ export class Renderer {
       //draws the player's line
       //move to the first point
       if (player.isDrawing) {
-        ctx.strokeStyle = player.lineColor;
         ctx.beginPath();
+        ctx.strokeStyle = player.circleColor;
         ctx.moveTo(player.lastX, player.lastY);
         let xc = (player.lastX + player.positionX) / 2;
         let yc = (player.lastY + player.positionY) / 2;
