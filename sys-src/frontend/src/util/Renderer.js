@@ -1,6 +1,4 @@
 export class Renderer {
-  constructor() {}
-
   drawPlayers(players, boardSize, canvas, ctx) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
