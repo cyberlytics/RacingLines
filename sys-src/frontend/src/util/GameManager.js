@@ -19,12 +19,6 @@ export class GameManager {
 
     addplayer(player) {
         this.players.push(player);
-        this.updateObservers();
-    }
-
-    updatePlayerScores()
-    {
-        this.updateObservers();
     }
 
     setUpRound() {
@@ -49,13 +43,19 @@ export class GameManager {
                         player.playerStateBuffer.push(latestPlayerState);
                     }
                     if (playerState != null) {
+                        if(playerState.isAlive == false && player.isAlive == true)
+                        {
+                            player.isAlive = false;
+                            this.increaseScore();
+                        }
                         player.setPlayerState(
                             playerState.positionX,
                             playerState.positionY,
-                            playerState.isDrawing
+                            playerState.isDrawing,
+                            playerState.isAlive
                         );
                     }
-                    this.checkCollision(player, ctx);
+                    //this.checkCollision(player, ctx);
                 } else if (player.id === this.clientId) {
                     player.updateDirection(
                         this.clientInput.InputLeft,
@@ -70,10 +70,10 @@ export class GameManager {
                         player.positionX,
                         player.positionY,
                         player.isDrawing,
-                        player.isAlive
+                        player.isAlive,
+                        player.score
                     );
                 }
-                //if(0) this.stopDrawing(player, this.randomNum(100, 300));
             });
         }
     }
@@ -108,6 +108,7 @@ export class GameManager {
             let posY = player.positionY + (player.size - 3) * Math.sin(rad);
             let px = ctx.getImageData(posX, posY, 1, 1);
             if (!this.pixelIsWhite(px)) {
+                console.log("COLLISION->"+player.name);
                 player.isAlive = false;
                 this.increaseScore();
                 return;
@@ -118,6 +119,7 @@ export class GameManager {
                 posY = player.positionY + (player.size - 3) * Math.sin(rad);
                 px = ctx.getImageData(posX, posY, 1, 1);
                 if (!this.pixelIsWhite(px)) {
+                    console.log("COLLISION->"+player.name);
                     player.isAlive = false;
                     this.increaseScore();
                     return;
@@ -128,10 +130,9 @@ export class GameManager {
 
     increaseScore() {
         this.players.forEach((player) => {
+            console.log(player.name+" isAlive="+player.isAlive);
             if (player.isAlive) {
                 player.addScore(50);
-                console.log('increaseScore');
-                console.log(player.score);
             }
         });
     }

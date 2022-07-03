@@ -54,13 +54,12 @@ export default function Scoreboard({ gameManager }) {
     }, []);
 
     const subscribe2players = () => {
-        players.forEach((player) => {
-            player.unsubscribe(update);
+        const newPlayers = [];
+        gameManager.players.forEach((item) => {
+            newPlayers.push(item);
         });
-        setPlayers(gameManager.players);
-        players.forEach((player) => {
-            player.subscribe(update);
-        });
+        setPlayers(newPlayers);
+
         return () =>
             // Unsubscribe when component is destroyed
             players.forEach((player) => {
@@ -68,9 +67,16 @@ export default function Scoreboard({ gameManager }) {
             });
     };
 
+    useEffect(() => {
+        gameManager.players.forEach((player) => {
+            player.subscribe(update);
+        });
+    }, [players]);
+
     // Callback when values of the player has changed
     const update = (player) => {
         const newPlayers = [];
+
         players.forEach((item) => {
             if (item.id !== player.id) {
                 newPlayers.push(item);
