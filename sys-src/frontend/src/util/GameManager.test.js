@@ -154,7 +154,7 @@ describe("Test if move sets up the Rounds ", () => {
 describe("Test if update of game state is functioning",()=>{
     
     const gameManager= new GameManager(io.connect(process.env.REACT_APP_IPAddress + ":3001"), 500);
-    gameManager.gameRunning=false;
+    gameManager.roundStarted=false;
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
    
@@ -183,7 +183,7 @@ describe("Test if update of game state is functioning",()=>{
     gameManager.clientId=1;
     player.playerStateBuffer=[];
     player.playerStateBuffer.length=5;
-    gameManager.gameRunning=true;
+    gameManager.roundStarted=true;
 
 
     gameManager.updateGameState(1000/6, ctx);
@@ -241,7 +241,7 @@ describe("Test if update of game state is functioning",()=>{
     const gameManager= new GameManager(io.connect(process.env.REACT_APP_IPAddress + ":3001"), 500);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-    const player1 = new Player("Tester1", 1, "orange", "orange", "100", "100", Math.PI);
+    const player1 = new Player("Tester1", 1, "orange", "orange", 100, 100, Math.PI);
     const player2 = new Player("Tester2", 2, "green", "green", 400, 400, Math.PI); 
 
     gameManager.randomNum(1,60)==1;
@@ -253,7 +253,7 @@ describe("Test if update of game state is functioning",()=>{
     player.id=1;
     gameManager.clientId=1;
 
-    gameManager.gameRunning=true;
+    gameManager.roundStarted=true;
     gameManager.updateGameState(1000/6, ctx);
     // Check for unchanged player states while game is not running
     test("Test if updateDirection gets called", () => {
@@ -388,28 +388,6 @@ describe("Test if the drawing of the player is resumed",()=>{
         expect(player.isDrawing).toBe(true);
     })
 })
-
-//Test function startRound
-/*
-describe("Test if function StartRound is working ",()=>{
-    const gameManager= new GameManager(io.connect(process.env.REACT_APP_IPAddress + ":3001"), 500);
-    const player1= new Player("Tester1", 1, "orange", "orange", "100", "100", Math.PI);
-    const players=[];
-    players[0]=player1;
-    const mockdate= new Date().getTime();
-
-    gameManager.startRound(players, 500);
-   test("Test if the SetUp function is called ", () => {
-        expect(gameManager.setUpRound()).toBeCalled;
-    })
-  
-    test("Test if the Player is getting drawn again", () => {
-        expect(gameManager.firstTick).toEqual(mockdate);
-    })
-    test("Test if the Player is getting drawn again", () => {
-        expect(gameManager.lastTick).toEqual(mockdate);
-    })
-})*/
 
 //Test function CheckCollision
 describe("Test if CheckCollision is working",()=>{

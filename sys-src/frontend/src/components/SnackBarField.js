@@ -18,6 +18,7 @@ export default function SnackBarField() {
   const action =(
     <React.Fragment style={{ display: "flex" }}>
       <IconButton
+          data-testid={"closeButton"}
         size="small"
         aria-label="close"
         color="black"
@@ -32,6 +33,7 @@ export default function SnackBarField() {
   return (
     <div style={{ }}>
       <Snackbar
+
         anchorOrigin={{
           horizontal: "center",
           vertical: "bottom",
@@ -40,7 +42,7 @@ export default function SnackBarField() {
         autoHideDuration={3000}
         onClose={handleToClose}
       >
-       <SnackbarContent action={action} style={{ backgroundColor:'transparent', width:"590px", height:"250px"}} message={<div horizontal="bottom" vertical="left"><img margin="0" padding="0" src={process.env.PUBLIC_URL + "/images/TheKeyboard.png"}/></div>}/>
+       <SnackbarContent data-testid={"snackbar"} action={action} style={{ backgroundColor:'transparent', width:"590px", height:"250px"}} message={<div horizontal="bottom" vertical="left"><img data-testid={"snackbarImage"} margin="0" padding="0" src={process.env.PUBLIC_URL + "/images/TheKeyboard.png"}/></div>}/>
       </Snackbar>
     </div>
   );

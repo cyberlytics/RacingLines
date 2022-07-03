@@ -21,11 +21,6 @@ export class GameManager {
         this.players.push(player);
     }
 
-    updatePlayerScores()
-    {
-        this.updateObservers();
-    }
-
     setUpRound() {
         if (this.roundStarted === false)
             this.ServerCommunicationHelper.startGame();
@@ -79,7 +74,6 @@ export class GameManager {
                         player.score
                     );
                 }
-                //if(0) this.stopDrawing(player, this.randomNum(100, 300));
             });
         }
     }

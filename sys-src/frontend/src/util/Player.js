@@ -7,7 +7,7 @@ export class Player {
         positionX,
         positionY,
         directionAngle,
-        score
+        score= 0
     ) {
         this.name = name;
         this.id = id;

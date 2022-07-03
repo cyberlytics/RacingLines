@@ -78,7 +78,7 @@ const Game = () => {
                 player.addToPlayerStateBuffer(value.x, value.y, true);
                 GamMan.addplayer(player);
             });
-            GamMan.updatePlayerScores();
+            GamMan.updateObservers();
             GamMan.players.forEach((player) => {
                 player.addScore(0);
             });
