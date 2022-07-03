@@ -25,11 +25,12 @@ const Game = () => {
         socket.on('newPlayerState', (data) => {
             for (let i = 0; i < GamMan.players.length; i++) {
                 if (GamMan.players[i].id === data.playerId) {
-                    //console.log('updating player');
+
                     GamMan.players[i].addToPlayerStateBuffer(
                         data.positionX,
                         data.positionY,
-                        data.isDrawing
+                        data.isDrawing,
+                        data.isAlive
                     );
                 }
             }
@@ -59,10 +60,8 @@ const Game = () => {
 
         socket.on('startCountdown', (data) => {
             let clientDictionary = data.clientDictionary;
-            console.log(clientDictionary);
-            //while (GamMan.players.length > 0) GamMan.players.pop();
             if (GamMan.players.length != 0) {
-                GamMan.players = [];
+                while (GamMan.players.length > 0) GamMan.players.pop();
             }
 
             Object.entries(clientDictionary).forEach(([key, value]) => {
@@ -73,7 +72,8 @@ const Game = () => {
                     value.player.LineColor,
                     value.x,
                     value.y,
-                    value.direction
+                    value.direction,
+                    value.player.Score
                 );
                 player.addToPlayerStateBuffer(value.x, value.y, true);
                 GamMan.addplayer(player);
@@ -83,7 +83,6 @@ const Game = () => {
                 player.addScore(0);
             });
 
-            console.log(GamMan.players);
             GamMan.countdownStarted = true;
             countDownTime = new Date().getTime();
 

@@ -90,6 +90,7 @@ io.on("connection", (socket) => {
       LineColor: "black",
       CanvasSize: "medium",
       GameTempo: "normal",
+      Score: 0
     };
 
     const clients = io.sockets.adapter.rooms.get(data.room);
@@ -159,7 +160,7 @@ io.on("connection", (socket) => {
 
   socket.on("clickedPlay", (data) => {
     const timestamp = new Date().getTime() + 3000;
-    io.in(data.room).emit("startGame", {'timestamp': timestamp, "players": lobbys[data.room]});
+    io.in(data.room).emit("startGame", {});
 
     setTimeout(startCountdown, 250, data.room);
     setTimeout(startGame, 3500, data.room);
@@ -236,11 +237,14 @@ io.on("connection", (socket) => {
     let isDrawing = data.isDrawing;
     let isAlive = data.isAlive;
     let playerId = socket.id;
+    lobbys[data.room][socket.id].Score = data.score;
+
     io.to(data.room).emit("newPlayerState", {
       positionX,
       positionY,
       isDrawing,
       playerId,
+      isAlive
     });
 
     checkifallplayersaredead(data.room, playerId, isAlive);
