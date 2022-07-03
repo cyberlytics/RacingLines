@@ -78,6 +78,7 @@ Set.prototype.getByIndex = function(index) { return [...this][index]; }
 
 let lobbys = {};
 let playersalivestatus = [];
+let round;
 
 io.on("connection", (socket) => {
   socket.on("join_lobby", (data) => {
@@ -161,6 +162,7 @@ io.on("connection", (socket) => {
   socket.on("clickedPlay", (data) => {
     const timestamp = new Date().getTime() + 3000;
     io.in(data.room).emit("startGame", {});
+    round = 0;
 
     setTimeout(startCountdown, 250, data.room);
     setTimeout(startGame, 3500, data.room);
@@ -168,9 +170,18 @@ io.on("connection", (socket) => {
 
   socket.on("nextRound", (data) => {
     playersalivestatus = {};
+    round = data.roundCount;
 
-    setTimeout(startCountdown, 250, data.room);
-    setTimeout(startGame, 3500, data.room);
+    console.log("roundCount: " + round);
+
+    if (round < 3) {
+        setTimeout(startCountdown, 250, data.room);
+        setTimeout(startGame, 3500, data.room);
+    }
+    else {
+        setTimeout(startCountdown, 10, data.room);
+        setTimeout(endGame, 10, data.room);
+    }
   });
 
   socket.on("startGame", (data) => {
@@ -229,6 +240,11 @@ io.on("connection", (socket) => {
   function startGame(room)
   {
     io.to(room).emit("gameStarted", {  });
+  }
+
+  function endGame(room)
+  {
+    io.in(room).emit("gameEnded", {room});
   }
 
   socket.on("playerState", (data) => {
