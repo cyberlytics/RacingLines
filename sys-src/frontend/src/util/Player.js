@@ -6,7 +6,8 @@ export class Player {
         wallColor,
         positionX,
         positionY,
-        directionAngle
+        directionAngle,
+        score
     ) {
         this.name = name;
         this.id = id;
@@ -14,7 +15,7 @@ export class Player {
         this.directionAngle = directionAngle;
         this.circleColor = circleColor;
         this.lineColor = wallColor;
-        this.score = 0;
+        this.score = score;
         this.speed = 100;
         this.isAlive = true;
         this.positionY = positionY;
@@ -45,24 +46,27 @@ export class Player {
             this.directionAngle += Math.PI / 70;
         }
     }
-    addToPlayerStateBuffer(X, Y, drawing) {
+    addToPlayerStateBuffer(X, Y, drawing, isAlive) {
         this.playerStateBuffer.push({
             positionX: X,
             positionY: Y,
             isDrawing: drawing,
+            isAlive: isAlive
         });
     }
 
-    setPlayerState(X, Y, isDrawing) {
+    setPlayerState(X, Y, isDrawing, isAlive) {
         this.lastY = this.positionY;
         this.lastX = this.positionX;
         this.positionX = X;
         this.positionY = Y;
         this.isDrawing = isDrawing;
+        this.isAlive = isAlive;
     }
 
     // Count up the score for players who are still alive
     addScore(value) {
+        console.log("Adding Score to "+this.name+". +"+value+" Points");
         if (this.isAlive) {
             this.score += value;
             this.updateObservers();
