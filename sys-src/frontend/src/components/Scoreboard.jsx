@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import game from "./Game";
 
 const useStyles = makeStyles({
     scoreboard: {
@@ -41,20 +42,9 @@ const useStyles = makeStyles({
 
 export default function Scoreboard({ gameManager }) {
     const [players, setPlayers] = useState(gameManager.players);
+    const [subscriptions, setSubscriptions] = useState(gameManager.players);
     const classes = useStyles();
 
-    // Callback when values of the player has changed
-    const update = (player) => {
-        const newPlayers = [];
-
-        players.forEach((item) => {
-            if (item.id !== player.id) {
-                newPlayers.push(item);
-            }
-        });
-        newPlayers.push(player);
-        setPlayers(newPlayers);
-    };
 
     useEffect(() => {
         gameManager.subscribe(subscribe2players);
@@ -70,7 +60,10 @@ export default function Scoreboard({ gameManager }) {
         gameManager.players.forEach((item) => {
             newPlayers.push(item);
         });
-        setPlayers(newPlayers);
+        subscriptions.forEach((player) => {
+            player.unsubscribe(update);
+        });
+        setSubscriptions(newPlayers);
 
         return () =>
             // Unsubscribe when component is destroyed
@@ -80,10 +73,25 @@ export default function Scoreboard({ gameManager }) {
     };
 
     useEffect(() => {
+        console.log(subscriptions);
         gameManager.players.forEach((player) => {
             player.subscribe(update);
         });
-    }, [players]);
+        setPlayers(subscriptions);
+    }, [subscriptions]);
+
+    // Callback when values of the player has changed
+    const update = (player) => {
+        const newPlayers = [];
+
+        players.forEach((item) => {
+            if (item.id !== player.id) {
+                newPlayers.push(item);
+            }
+        });
+        newPlayers.push(player);
+        setPlayers(newPlayers);
+    };
 
 
 
