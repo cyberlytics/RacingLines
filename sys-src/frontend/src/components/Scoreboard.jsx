@@ -42,7 +42,9 @@ const useStyles = makeStyles({
 
 export default function Scoreboard({ gameManager }) {
     const [players, setPlayers] = useState(gameManager.players);
+    const [subscriptions, setSubscriptions] = useState(gameManager.players);
     const classes = useStyles();
+
 
     useEffect(() => {
         gameManager.subscribe(subscribe2players);
@@ -58,7 +60,10 @@ export default function Scoreboard({ gameManager }) {
         gameManager.players.forEach((item) => {
             newPlayers.push(item);
         });
-        setPlayers(newPlayers);
+        subscriptions.forEach((player) => {
+            player.unsubscribe(update);
+        });
+        setSubscriptions(newPlayers);
 
         return () =>
             // Unsubscribe when component is destroyed
@@ -68,10 +73,12 @@ export default function Scoreboard({ gameManager }) {
     };
 
     useEffect(() => {
+        console.log(subscriptions);
         gameManager.players.forEach((player) => {
             player.subscribe(update);
         });
-    }, [players]);
+        setPlayers(subscriptions);
+    }, [subscriptions]);
 
     // Callback when values of the player has changed
     const update = (player) => {
@@ -85,6 +92,8 @@ export default function Scoreboard({ gameManager }) {
         newPlayers.push(player);
         setPlayers(newPlayers);
     };
+
+
 
     return (
         <>
