@@ -1,6 +1,5 @@
 import { Renderer } from './Renderer';
 import { ServerCommunicationHelper } from './ServerCommunicationHelper';
-import React from 'react';
 
 export class GameManager {
     constructor(Socket, boardSize) {
@@ -43,7 +42,7 @@ export class GameManager {
                         player.playerStateBuffer.push(latestPlayerState);
                     }
                     if (playerState != null) {
-                        if(playerState.isAlive == false && player.isAlive == true)
+                        if(playerState.isAlive === false && player.isAlive === true)
                         {
                             player.isAlive = false;
                             this.increaseScore();
@@ -64,7 +63,7 @@ export class GameManager {
                     player.move(deltaTime);
                     this.checkCollision(player, ctx);
 
-                    if (this.randomNum(1, 60) == 1)
+                    if (this.randomNum(1, 60) === 1)
                         this.stopDrawing(player, this.randomNum(250, 350));
                     this.ServerCommunicationHelper.sendClientPlayerState(
                         player.positionX,

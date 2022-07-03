@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import game from "./Game";
 
 const useStyles = makeStyles({
     scoreboard: {
@@ -44,6 +43,19 @@ export default function Scoreboard({ gameManager }) {
     const [players, setPlayers] = useState(gameManager.players);
     const classes = useStyles();
 
+    // Callback when values of the player has changed
+    const update = (player) => {
+        const newPlayers = [];
+
+        players.forEach((item) => {
+            if (item.id !== player.id) {
+                newPlayers.push(item);
+            }
+        });
+        newPlayers.push(player);
+        setPlayers(newPlayers);
+    };
+
     useEffect(() => {
         gameManager.subscribe(subscribe2players);
         // Subscribe each player for changes
@@ -73,18 +85,7 @@ export default function Scoreboard({ gameManager }) {
         });
     }, [players]);
 
-    // Callback when values of the player has changed
-    const update = (player) => {
-        const newPlayers = [];
 
-        players.forEach((item) => {
-            if (item.id !== player.id) {
-                newPlayers.push(item);
-            }
-        });
-        newPlayers.push(player);
-        setPlayers(newPlayers);
-    };
 
     return (
         <>
