@@ -44,7 +44,9 @@ const Game = () => {
             const ctxLi = canvasLi.getContext('2d');
 
             //next round
-            GamMan.roundCount++;
+            if (GamMan.roundStarted === true) {
+                GamMan.roundCount++;
+            }
             GamMan.roundStarted = false;
             GamMan.countdownStarted = false;
             GamMan.clearPlayers(canvasPl, ctxPl);
@@ -52,8 +54,10 @@ const Game = () => {
             GamMan.resetPlayers();
             GamMan.Renderer.borderDrawn = false;
 
+            let roundCount = GamMan.roundCount;
+
             GamMan.updateObservers();
-            socket.emit("nextRound", {room});
+            socket.emit("nextRound", {room, roundCount});
         });
 
 
@@ -88,13 +92,59 @@ const Game = () => {
         });
 
         socket.on('gameStarted', (data) => {
-
             const canvasCo = document.getElementById("cvCountdown");
             const ctxCo = canvasCo.getContext("2d");
             GamMan.clearCountdown(canvasCo, ctxCo);
 
             GamMan.countdownStarted = false;
             GamMan.roundStarted = true;
+        });
+
+        socket.on('gameEnded', (data) => {
+            console.log("gameEnded");
+            const canvasCo = document.getElementById("cvCountdown");
+            const ctxCo = canvasCo.getContext("2d");
+
+
+            const canvasPl = document.getElementById('cvPlayers');
+            const ctxPl = canvasPl.getContext('2d');
+
+            const canvasLi = document.getElementById('cvLines');
+            const ctxLi = canvasLi.getContext('2d');
+
+            GamMan.clearCountdown(canvasCo, ctxCo);
+            GamMan.clearPlayers(canvasPl, ctxPl);
+            GamMan.clearLines(canvasLi, ctxLi);
+            GamMan.resetPlayers();
+            GamMan.countdownStarted = false;
+
+            const endOfGame = document.getElementById('EndOfGame');
+            endOfGame.hidden = false;
+
+            while (endOfGame.firstChild) {
+                endOfGame.removeChild(endOfGame.firstChild);
+            }
+
+            const h1 = document.createElement('h1');
+            h1.innerHTML = "Game is Over!";
+            h1.style.textAlign = "center";
+            endOfGame.appendChild(h1);
+
+            const button = document.createElement('button');
+            button.innerHTML = "Back to Lobby";
+            button.style.textAlign = "center";
+            button.style.color = "white";
+            button.style.backgroundColor = '#3b3b3b';
+            button.onclick = () => {
+                window.location.href = '/Lobby?room=' + data.room;
+            }
+            button.style.borderRadius = "8px";
+            button.style.width = "200px";
+            button.style.height = "30px";
+            button.addEventListener('mouseover', () => {
+                button.style.cursor = 'pointer';
+            });
+            endOfGame.appendChild(button);
         });
 
         socket.on('connect', () => {
@@ -175,9 +225,9 @@ const Game = () => {
         }, 1000 / 60);
         return () => clearInterval(tick);
     });
-
   return (
     <div>
+        <div style={{left: 340, top: 20, zIndex: 4, position: "absolute", textAlign: "center"}} hidden={true} id="EndOfGame"></div>
       <canvas
         id={"cvCountdown"}
         width={boardSize}
